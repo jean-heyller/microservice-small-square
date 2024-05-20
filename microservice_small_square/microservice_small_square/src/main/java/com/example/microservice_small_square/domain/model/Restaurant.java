@@ -4,13 +4,26 @@ package com.example.microservice_small_square.domain.model;
 
 
 public class Restaurant {
+    private final Long id;
 
     private String name;
     private String nit;
+
+
     private String address;
     private String phoneNumber;
     private String urlLogo;
-    private String ownerId;
+    private Long ownerId;
+
+    public Restaurant(Long id, String name, String nit, String address, String phoneNumber, String urlLogo, Long ownerId) {
+        this.id = id;
+        this.name = name;
+        this.nit = nit;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.urlLogo = urlLogo;
+        this.ownerId = ownerId;
+    }
 
     public String getName() {
         return name;
@@ -36,7 +49,7 @@ public class Restaurant {
         this.urlLogo = urlLogo;
     }
 
-    public void setOwnerId(String ownerId) {
+    public void setOwnerId(Long ownerId) {
         this.ownerId = ownerId;
     }
 
@@ -56,9 +69,14 @@ public class Restaurant {
         return urlLogo;
     }
 
-    public String getOwnerId() {
+    public Long getOwnerId() {
         return ownerId;
     }
+
+    public Long getId() {
+        return id;
+    }
+
 
 
 

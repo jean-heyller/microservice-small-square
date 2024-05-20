@@ -32,5 +32,5 @@ public class AddRestaurantRequest {
     private final String urlLogo;
 
     @NotBlank(message = AdapterConstans.FIELD_OWNER_ID_NULL_MESSAGE)
-    private final String ownerId;
+    private final Long ownerId;
 }
