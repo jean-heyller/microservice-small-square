@@ -1,8 +1,9 @@
 package com.example.microservice_small_square.adapters.driven.jpa.mysql.utils;
 import com.example.microservice_small_square.adapters.driven.client.UserClient;
+import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.DataNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import feign.FeignException;
 import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.databind.JsonNode;
 
 
@@ -10,23 +11,27 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class RoleValidationService {
     private final UserClient userClient;
 
+    private static final  String MESSAGE = "Error validating the json response";
+
+    private static final String MESSAGE_USER_NOT_FOUND = "the user ";
+
     public RoleValidationService(UserClient userClient) {
         this.userClient = userClient;
     }
 
     public boolean validateUserRole(Long userId, String role) {
-        String jsonRolName = userClient.getUserRoles(userId);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode;
         try {
-            jsonNode = objectMapper.readTree(jsonRolName);
-            String rolName = jsonNode.get("name").asText();
+            String jsonRolName = userClient.getUserRoles(userId);
 
-            System.out.println("El rol del usuario es: " + rolName);
-            return role.equals(rolName);
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(jsonRolName);
+            String attribute = "name";
+            String rolName = jsonNode.get(attribute).asText();
+            return rolName.equals(role);
+        } catch (FeignException.BadRequest e) {
+            throw new DataNotFoundException(MESSAGE_USER_NOT_FOUND);
         } catch (Exception e) {
-            throw new RuntimeException("Error al procesar el JSON", e);
+            throw new DataNotFoundException(MESSAGE);
         }
     }
 }
