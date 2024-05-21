@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -31,6 +32,6 @@ public class AddRestaurantRequest {
     @NotBlank(message = AdapterConstans.FIELD_URL_LOGO_NULL_MESSAGE)
     private final String urlLogo;
 
-    @NotBlank(message = AdapterConstans.FIELD_OWNER_ID_NULL_MESSAGE)
+    @NotNull(message = AdapterConstans.FIELD_OWNER_ID_NULL_MESSAGE)
     private final Long ownerId;
 }
