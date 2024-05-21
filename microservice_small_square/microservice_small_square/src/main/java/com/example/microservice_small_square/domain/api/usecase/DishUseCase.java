@@ -5,6 +5,9 @@ import com.example.microservice_small_square.domain.exception.SizeMinException;
 import com.example.microservice_small_square.domain.model.Dish;
 import com.example.microservice_small_square.domain.spi.IDishPersistencePort;
 
+import java.util.Optional;
+import java.util.OptionalDouble;
+
 public class DishUseCase implements IDishServicePort {
 
     private final IDishPersistencePort dishPersistencePort;
@@ -20,5 +23,10 @@ public class DishUseCase implements IDishServicePort {
         } else {
             throw new SizeMinException();
         }
+    }
+
+    @Override
+    public void updateDish(Long id, Optional<Double> price, Optional<String> description) {
+        dishPersistencePort.updateDish(id, price, description);
     }
 }

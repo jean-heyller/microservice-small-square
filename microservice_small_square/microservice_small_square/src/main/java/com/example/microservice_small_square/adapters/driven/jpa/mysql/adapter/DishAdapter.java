@@ -1,5 +1,6 @@
 package com.example.microservice_small_square.adapters.driven.jpa.mysql.adapter;
 
+import com.example.microservice_small_square.adapters.driven.jpa.mysql.entity.DishEntity;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.entity.RestaurantEntity;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.DataNotFoundException;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.PermissionDeniedException;
@@ -47,6 +48,22 @@ public class DishAdapter implements IDishPersistencePort {
         }
         dish.setRestaurant(restaurantEntityMapper.toModel(restaurant));
         dishRepository.save(dishEntityMapper.toEntity(dish));
+    }
+
+    @Override
+    public void updateDish(Long id, Optional<Double> price, Optional<String> description) {
+        Optional<DishEntity> dishEntityOptional = dishRepository.findById(id);
+
+        if (!dishEntityOptional.isPresent()) {
+            throw new RuntimeException("Dish not found");
+        }
+
+        DishEntity dishEntity = dishEntityOptional.get();
+
+        price.ifPresent(dishEntity::setPrice);
+        description.ifPresent(dishEntity::setDescription);
+
+        dishRepository.save(dishEntity);
     }
 
 

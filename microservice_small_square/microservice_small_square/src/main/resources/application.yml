@@ -11,10 +11,12 @@ spring:
       ddl-auto: update
       dialect: org.hibernate.dialect.MySQL5Dialect
 
+
   springdoc:
     api-docs:
       path: /api-docs
     swagger-ui:
       path: /swagger-ui
+
 
 
