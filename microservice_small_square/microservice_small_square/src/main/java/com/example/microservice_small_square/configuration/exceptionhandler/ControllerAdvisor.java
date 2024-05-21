@@ -1,6 +1,7 @@
 package com.example.microservice_small_square.configuration.exceptionhandler;
 
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.DataNotFoundException;
+import com.example.microservice_small_square.domain.exception.SizeMinException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,11 +42,19 @@ public class ControllerAdvisor {
                     errorMessage, HttpStatus.BAD_REQUEST.toString(), LocalDateTime.now()));
         }
 
-        @ExceptionHandler
+        @ExceptionHandler(DataNotFoundException.class)
         public ResponseEntity<ExceptionResponse> handleDataNotFoundException(DataNotFoundException ex) {
             return ResponseEntity.badRequest().body(new ExceptionResponse(
                     ex.getMessage() + Constants.DATA_NOT_FOUND_EXCEPTION_MESSAGE, HttpStatus.BAD_REQUEST.toString(), LocalDateTime.now()));
         }
+
+        @ExceptionHandler(SizeMinException.class)
+        public ResponseEntity<ExceptionResponse> handleSizeMinException(SizeMinException ex) {
+            return ResponseEntity.badRequest().body(new ExceptionResponse(
+                    ex.getMessage() + Constants.SIZE_MIN_EXCEPTION_MESSAGE, HttpStatus.BAD_REQUEST.toString(), LocalDateTime.now()));
+        }
+
+
     }
 
 

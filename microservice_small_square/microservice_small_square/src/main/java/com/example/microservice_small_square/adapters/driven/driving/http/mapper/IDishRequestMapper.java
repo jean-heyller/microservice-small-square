@@ -7,9 +7,8 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface IDishRequestMapper {
-    @Mapping(target = "id", ignore = true)
     @Mapping(target = "restaurant.name", constant = "restaurantName")
     @Mapping(target = "restaurant.id", source = "restaurantId" )
-    @Mapping(target = "restaurant.description", constant = "restaurantDescription")
+    @Mapping(target = "restaurant.address", constant = "restaurantAddress")
     Dish addRequestToDish(AddDishRequest addDishRequest);
 }

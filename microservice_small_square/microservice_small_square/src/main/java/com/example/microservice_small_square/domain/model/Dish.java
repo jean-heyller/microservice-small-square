@@ -1,21 +1,32 @@
 package com.example.microservice_small_square.domain.model;
 
 public class Dish {
+    private Long id;
     private String name;
-    private int price;
+    private double price;
     private String description;
     private String imageUrl;
     private String category;
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
     private Restaurant restaurant;
     private boolean active = true;
 
-    public Dish(String name, int price, String description, String imageUrl, String category, Restaurant restaurant) {
+    public Dish(String name, double price, String description, String imageUrl, String category, Restaurant restaurant,Long id) {
         this.name = name;
         this.price = price;
         this.description = description;
         this.imageUrl = imageUrl;
         this.category = category;
         this.restaurant = restaurant;
+        this.id = id;
     }
 
     public String getName() {
@@ -50,7 +61,7 @@ public class Dish {
         this.restaurant = restaurant;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 

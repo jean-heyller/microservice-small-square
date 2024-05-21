@@ -32,6 +32,9 @@ public class DishEntity {
     @Column
     private String category;
 
+    @Column
+    private Boolean isActived = true;
+
     @ManyToOne
     @JoinColumn(name = "id_restaurant")
     private RestaurantEntity restaurant;

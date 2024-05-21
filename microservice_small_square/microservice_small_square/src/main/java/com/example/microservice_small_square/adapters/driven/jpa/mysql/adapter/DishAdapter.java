@@ -1,6 +1,8 @@
 package com.example.microservice_small_square.adapters.driven.jpa.mysql.adapter;
 
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.entity.RestaurantEntity;
+import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.DataNotFoundException;
+import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.PermissionDeniedException;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.mapper.IDishEntityMapper;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.mapper.IRestaurantEntityMapper;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IDishRepository;
@@ -24,6 +26,10 @@ public class DishAdapter implements IDishPersistencePort {
 
     private final RoleValidationService roleValidationService;
 
+    private static final String DISH_EXISTS_ERROR_MESSAGE = "The Restaurant";
+
+    private static final String OWNER_ERROR_MESSAGE = "the user";
+
     @Override
     public void saveDish(Dish dish) {
         String normalizedDishName = dish.getName().toLowerCase();
@@ -31,13 +37,13 @@ public class DishAdapter implements IDishPersistencePort {
         Long idRestaurant = dish.getRestaurant().getId();
         Optional<RestaurantEntity> restaurantEntity = restaurantRepository.findById(idRestaurant);
         if (restaurantEntity.isEmpty()) {
-            throw new RuntimeException("The restaurant does not exist");
+            throw new DataNotFoundException(DISH_EXISTS_ERROR_MESSAGE);
         }
         RestaurantEntity restaurant = restaurantEntity.get();
         Long idOwner = restaurant.getOwnerId();
         boolean validate = roleValidationService.validateUserRole(idOwner, "propietario");
         if (!validate) {
-            throw new RuntimeException("the user does not have the necessary permissions");
+            throw new PermissionDeniedException(OWNER_ERROR_MESSAGE);
         }
         dish.setRestaurant(restaurantEntityMapper.toModel(restaurant));
         dishRepository.save(dishEntityMapper.toEntity(dish));

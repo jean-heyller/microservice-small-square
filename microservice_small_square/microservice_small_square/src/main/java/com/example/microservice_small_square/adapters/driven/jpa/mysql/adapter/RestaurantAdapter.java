@@ -16,7 +16,7 @@ public class RestaurantAdapter implements IRestaurantPersistencePort {
     private final RoleValidationService roleValidationService;
 
     private static final String MESSAGE_ERROR_USER = "the user ";
-    private static final String OWNER = "owner";
+    private static final String OWNER = "propietario";
 
     @Override
     public void saveRestaurant(Restaurant restaurant) {

@@ -15,5 +15,7 @@ public class Constants {
     public static final String PERMISSION_DENIED_CREATE_USER_EXCEPTION_MESSAGE = "Permission denied to create user";
 
     public static final String BAD_CREDENTIALS_EXCEPTION_MESSAGE = "User or password incorrect";
+
+    public static final String SIZE_MIN_EXCEPTION_MESSAGE = "The price must be greater than 0";
 }
 
