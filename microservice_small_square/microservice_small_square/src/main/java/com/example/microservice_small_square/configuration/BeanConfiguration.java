@@ -1,11 +1,17 @@
 package com.example.microservice_small_square.configuration;
 
+import com.example.microservice_small_square.adapters.driven.jpa.mysql.adapter.DishAdapter;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.adapter.RestaurantAdapter;
+import com.example.microservice_small_square.adapters.driven.jpa.mysql.mapper.IDishEntityMapper;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.mapper.IRestaurantEntityMapper;
+import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IDishRepository;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IRestaurantRepository;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.utils.RoleValidationService;
+import com.example.microservice_small_square.domain.api.IDishServicePort;
 import com.example.microservice_small_square.domain.api.IRestaurantServicePort;
+import com.example.microservice_small_square.domain.api.usecase.DishUseCase;
 import com.example.microservice_small_square.domain.api.usecase.RestaurantUseCase;
+import com.example.microservice_small_square.domain.spi.IDishPersistencePort;
 import com.example.microservice_small_square.domain.spi.IRestaurantPersistencePort;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +27,10 @@ public class BeanConfiguration {
 
     private final RoleValidationService roleValidationService;
 
+    private final IDishEntityMapper dishEntityMapper;
+
+    private final IDishRepository dishRepository;
+
     @Bean
     public IRestaurantPersistencePort restaurantPersistencePort(){
         return new RestaurantAdapter(restaurantRepository,restaurantEntityMapper,roleValidationService);
@@ -28,6 +38,16 @@ public class BeanConfiguration {
     @Bean
     public IRestaurantServicePort restaurantServicePort(){
         return new RestaurantUseCase(restaurantPersistencePort());
+    }
+
+    @Bean
+    public IDishPersistencePort dishPersistencePort(){
+        return new DishAdapter(dishRepository,dishEntityMapper,restaurantRepository,restaurantEntityMapper,roleValidationService);
+    }
+
+    @Bean
+    public IDishServicePort dishServicePort(){
+        return new DishUseCase(dishPersistencePort());
     }
 
 }

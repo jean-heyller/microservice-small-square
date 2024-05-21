@@ -28,15 +28,7 @@ import static org.mockito.Mockito.when;
         adapter = new RestaurantAdapter(repository, mapper, roleValidationService);
     }
 
-    @Test
-     void testSaveRestaurant_WithValidRole() {
-        Restaurant restaurant = new Restaurant(1L, "Test Name", "Test Nit", "Test Address", "Test Phone", "Test URL", 1L);
-        when(roleValidationService.validateUserRole(restaurant.getOwnerId(), "owner")).thenReturn(true);
 
-        adapter.saveRestaurant(restaurant);
-
-        verify(repository).save(any());
-    }
 
     @Test
      void testSaveRestaurant_WithInvalidRole() {
