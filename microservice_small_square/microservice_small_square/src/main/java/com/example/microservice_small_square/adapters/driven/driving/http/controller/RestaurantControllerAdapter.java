@@ -3,6 +3,12 @@ package com.example.microservice_small_square.adapters.driven.driving.http.contr
 import com.example.microservice_small_square.adapters.driven.driving.http.dto.request.AddRestaurantRequest;
 import com.example.microservice_small_square.adapters.driven.driving.http.mapper.IRestaurantRequestMapper;
 import com.example.microservice_small_square.domain.api.IRestaurantServicePort;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,6 +28,15 @@ public class RestaurantControllerAdapter {
 
     private final IRestaurantServicePort restaurantServicePort;
 
+    @Operation(summary = "Add a new restaurant")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Restaurant created",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = AddRestaurantRequest.class)) }),
+            @ApiResponse(responseCode = "400", description = "Invalid restaurant data supplied",
+                    content = @Content),
+            @ApiResponse(responseCode = "409", description = "Restaurant already exists",
+                    content = @Content) })
     @PostMapping("/")
     public ResponseEntity<Void> addRestaurant(@Valid @RequestBody AddRestaurantRequest request){
         restaurantServicePort.saveRestaurant(restaurantRequestMapper.addRequestToRestaurant(request));
