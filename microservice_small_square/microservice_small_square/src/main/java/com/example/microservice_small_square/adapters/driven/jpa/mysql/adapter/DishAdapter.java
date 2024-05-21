@@ -31,6 +31,8 @@ public class DishAdapter implements IDishPersistencePort {
 
     private static final String OWNER_ERROR_MESSAGE = "the user";
 
+    private static final String DISH_NOT_FOUND_ERROR_MESSAGE = "The dish";
+
     @Override
     public void saveDish(Dish dish) {
         String normalizedDishName = dish.getName().toLowerCase();
@@ -55,7 +57,7 @@ public class DishAdapter implements IDishPersistencePort {
         Optional<DishEntity> dishEntityOptional = dishRepository.findById(id);
 
         if (!dishEntityOptional.isPresent()) {
-            throw new RuntimeException("Dish not found");
+            throw new DataNotFoundException(DISH_NOT_FOUND_ERROR_MESSAGE);
         }
 
         DishEntity dishEntity = dishEntityOptional.get();
@@ -65,6 +67,5 @@ public class DishAdapter implements IDishPersistencePort {
 
         dishRepository.save(dishEntity);
     }
-
 
 }

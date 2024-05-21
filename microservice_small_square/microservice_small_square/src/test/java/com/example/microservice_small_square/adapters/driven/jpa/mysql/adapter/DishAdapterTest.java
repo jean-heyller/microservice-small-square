@@ -1,5 +1,6 @@
 package com.example.microservice_small_square.adapters.driven.jpa.mysql.adapter;
 
+import com.example.microservice_small_square.adapters.driven.jpa.mysql.entity.DishEntity;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.entity.RestaurantEntity;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.DataNotFoundException;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.PermissionDeniedException;
@@ -81,5 +82,24 @@ public class DishAdapterTest {
         when(restaurantRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(DataNotFoundException.class, () -> dishAdapter.saveDish(dish));
+    }
+
+    @Test
+    void testUpdateDish() {
+        Long id = 1L;
+        Optional<Double> price = Optional.of(15.0);
+        Optional<String> description = Optional.of("Updated Dish");
+
+        DishEntity dishEntity = new DishEntity();
+        dishEntity.setId(id);
+        dishEntity.setPrice(price.get());
+        dishEntity.setDescription(description.get());
+
+        when(dishRepository.findById(id)).thenReturn(Optional.of(dishEntity));
+
+        dishAdapter.updateDish(id, price, description);
+
+        verify(dishRepository).findById(id);
+        verify(dishRepository).save(dishEntity);
     }
 }
