@@ -8,5 +8,5 @@ import org.mapstruct.Mapper;
 public interface IRestaurantEntityMapper {
     RestaurantEntity toEntity(Restaurant restaurant);
 
-    RestaurantEntity toModel(RestaurantEntity restaurantEntity);
+    Restaurant toModel(RestaurantEntity restaurantEntity);
 }

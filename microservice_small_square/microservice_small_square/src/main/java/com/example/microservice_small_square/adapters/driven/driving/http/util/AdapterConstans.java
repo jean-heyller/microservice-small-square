@@ -29,6 +29,23 @@ public class AdapterConstans {
 
     public static final String FIELD_NAME_PATTERN_MESSAGE = "`name` should be valid";
 
+    public static final String FIELD_DESCRIPTION_NULL_MESSAGE = "`description` cannot be null";
+
+    public static final String FIELD_DESCRIPTION_SIZE_MESSAGE = "`description` cannot be greater than 90 characters";
+
+    public static final String FIELD_PRICE_NULL_MESSAGE = "`price` cannot be null";
+
+    public static final String FIELD_PRICE_MIN_MESSAGE = "`price` should be greater than 0";
+
+    public static final String FIELD_IMAGE_URL_NULL_MESSAGE = "`image url` cannot be null";
+
+    public static final String FIELD_CATEGORY_NULL_MESSAGE = "`category` cannot be null";
+
+    public static final String FIELD_RESTAURANT_ID_NULL_MESSAGE = "`restaurant id` cannot be null";
+
+
+
+
 
 
 }
