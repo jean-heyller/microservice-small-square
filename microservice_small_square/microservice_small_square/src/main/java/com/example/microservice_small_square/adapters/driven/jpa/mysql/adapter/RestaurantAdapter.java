@@ -3,7 +3,7 @@ package com.example.microservice_small_square.adapters.driven.jpa.mysql.adapter;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.PermissionDeniedException;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.mapper.IRestaurantEntityMapper;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IRestaurantRepository;
-import com.example.microservice_small_square.adapters.driven.jpa.mysql.utils.RoleValidationService;
+import com.example.microservice_small_square.adapters.driven.utils.services.RoleValidationService;
 import com.example.microservice_small_square.domain.model.Restaurant;
 import com.example.microservice_small_square.domain.spi.IRestaurantPersistencePort;
 import lombok.RequiredArgsConstructor;

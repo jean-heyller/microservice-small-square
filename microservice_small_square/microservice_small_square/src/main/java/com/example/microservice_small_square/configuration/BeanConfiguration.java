@@ -7,8 +7,7 @@ import com.example.microservice_small_square.adapters.driven.jpa.mysql.mapper.ID
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.mapper.IRestaurantEntityMapper;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IDishRepository;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IRestaurantRepository;
-import com.example.microservice_small_square.adapters.driven.jpa.mysql.utils.RoleValidationService;
-import com.example.microservice_small_square.configuration.filter.JwtTokenValidator;
+import com.example.microservice_small_square.adapters.driven.utils.services.RoleValidationService;
 import com.example.microservice_small_square.domain.api.IDishServicePort;
 import com.example.microservice_small_square.domain.api.IRestaurantServicePort;
 import com.example.microservice_small_square.domain.api.usecase.DishUseCase;

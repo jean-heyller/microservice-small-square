@@ -1,4 +1,4 @@
-package com.example.microservice_small_square.adapters.driven.jpa.mysql.utils;
+package com.example.microservice_small_square.adapters.driven.utils.services;
 import com.example.microservice_small_square.adapters.driven.client.UserClient;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.DataNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
