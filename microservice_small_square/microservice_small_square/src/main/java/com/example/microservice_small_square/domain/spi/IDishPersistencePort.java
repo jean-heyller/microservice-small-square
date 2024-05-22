@@ -7,4 +7,5 @@ import java.util.Optional;
 public interface IDishPersistencePort {
     void saveDish(Dish dish);
     void updateDish(Long id, Optional<Double> price, Optional<String> description);
+    void changeStatus(Long id);
 }
