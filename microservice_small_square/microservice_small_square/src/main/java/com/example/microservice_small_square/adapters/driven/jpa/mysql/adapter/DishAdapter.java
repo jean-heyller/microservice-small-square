@@ -1,5 +1,6 @@
 package com.example.microservice_small_square.adapters.driven.jpa.mysql.adapter;
 
+import com.example.microservice_small_square.adapters.driven.driving.http.util.SecurityService;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.entity.DishEntity;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.entity.RestaurantEntity;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.DataNotFoundException;
@@ -27,6 +28,8 @@ public class DishAdapter implements IDishPersistencePort {
 
     private final RoleValidationService roleValidationService;
 
+    private final SecurityService securityService;
+
     private static final String DISH_EXISTS_ERROR_MESSAGE = "The Restaurant";
 
     private static final String OWNER_ERROR_MESSAGE = "the user";
@@ -43,9 +46,8 @@ public class DishAdapter implements IDishPersistencePort {
             throw new DataNotFoundException(DISH_EXISTS_ERROR_MESSAGE);
         }
         RestaurantEntity restaurant = restaurantEntity.get();
-        Long idOwner = restaurant.getOwnerId();
-        boolean validate = roleValidationService.validateUserRole(idOwner, "propietario");
-        if (!validate) {
+        Long userId = securityService.getUserIdFromContext();
+        if(restaurant.getOwnerId()!= userId){
             throw new PermissionDeniedException(OWNER_ERROR_MESSAGE);
         }
         dish.setRestaurant(restaurantEntityMapper.toModel(restaurant));

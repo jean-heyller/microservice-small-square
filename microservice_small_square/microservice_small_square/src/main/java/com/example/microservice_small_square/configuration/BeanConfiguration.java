@@ -1,5 +1,6 @@
 package com.example.microservice_small_square.configuration;
 
+import com.example.microservice_small_square.adapters.driven.driving.http.util.SecurityService;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.adapter.DishAdapter;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.adapter.RestaurantAdapter;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.mapper.IDishEntityMapper;
@@ -7,6 +8,7 @@ import com.example.microservice_small_square.adapters.driven.jpa.mysql.mapper.IR
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IDishRepository;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IRestaurantRepository;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.utils.RoleValidationService;
+import com.example.microservice_small_square.configuration.filter.JwtTokenValidator;
 import com.example.microservice_small_square.domain.api.IDishServicePort;
 import com.example.microservice_small_square.domain.api.IRestaurantServicePort;
 import com.example.microservice_small_square.domain.api.usecase.DishUseCase;
@@ -31,6 +33,8 @@ public class BeanConfiguration {
 
     private final IDishRepository dishRepository;
 
+    private final SecurityService securityService;
+
     @Bean
     public IRestaurantPersistencePort restaurantPersistencePort(){
         return new RestaurantAdapter(restaurantRepository,restaurantEntityMapper,roleValidationService);
@@ -42,12 +46,14 @@ public class BeanConfiguration {
 
     @Bean
     public IDishPersistencePort dishPersistencePort(){
-        return new DishAdapter(dishRepository,dishEntityMapper,restaurantRepository,restaurantEntityMapper,roleValidationService);
+        return new DishAdapter(dishRepository,dishEntityMapper,restaurantRepository,restaurantEntityMapper,
+                roleValidationService,securityService);
     }
 
     @Bean
     public IDishServicePort dishServicePort(){
         return new DishUseCase(dishPersistencePort());
     }
+
 
 }

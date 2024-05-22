@@ -20,8 +20,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-public class DishAdapterTest {
+ class DishAdapterTest {
 
     private IDishRepository dishRepository;
     private IDishEntityMapper dishEntityMapper;
@@ -41,7 +40,7 @@ public class DishAdapterTest {
     }
 
     @Test
-    public void testSaveDishWithValidRole() {
+     void testSaveDishWithValidRole() {
         Restaurant restaurant = new Restaurant(1L, "Test Restaurant", "Test nit"
                 , "Test address", "3042912963", "Test email", 1L);
 
@@ -58,7 +57,7 @@ public class DishAdapterTest {
     }
 
     @Test
-    public void testSaveDishWithInvalidRole() {
+     void testSaveDishWithInvalidRole() {
         Restaurant restaurant = new Restaurant(1L, "Test Restaurant", "Test nit"
                 , "Test address", "3042912963", "Test email", 1L);
 
@@ -73,7 +72,7 @@ public class DishAdapterTest {
     }
 
     @Test
-    public void testSaveDishWithNonExistentRestaurant() {
+     void testSaveDishWithNonExistentRestaurant() {
         Restaurant restaurant = new Restaurant(1L, "Test Restaurant", "Test nit"
                 , "Test address", "3042912963", "Test email", 1L);
 
