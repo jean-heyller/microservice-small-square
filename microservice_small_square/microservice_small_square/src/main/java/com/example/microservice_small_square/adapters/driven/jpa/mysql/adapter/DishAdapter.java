@@ -61,8 +61,9 @@ public class DishAdapter implements IDishPersistencePort {
     }
 
     @Override
-    public void updateDish(Long id, Optional<Double> price, Optional<String> description) {
-        Optional<DishEntity> dishEntityOptional = dishRepository.findById(id);
+    public void updateDish(Long id, Optional<Double> price, Optional<String> description,
+                            Long restaurantId) {
+        Optional<DishEntity> dishEntityOptional = dishRepository.findByRestaurantIdAndId(restaurantId,id);
 
         if (!dishEntityOptional.isPresent()) {
             throw new DataNotFoundException(DISH_ERROR_MESSAGE);
@@ -91,8 +92,8 @@ public class DishAdapter implements IDishPersistencePort {
     }
 
     @Override
-    public void changeStatus(Long id) {
-        Optional<DishEntity> dishEntityOptional = dishRepository.findById(id);
+    public void changeStatus(Long id, Long restaurantId) {
+        Optional<DishEntity> dishEntityOptional = dishRepository.findByRestaurantIdAndId(restaurantId,id);
 
         if (!dishEntityOptional.isPresent()) {
             throw new DataNotFoundException(DISH_ERROR_MESSAGE);
@@ -107,7 +108,6 @@ public class DishAdapter implements IDishPersistencePort {
         if (!restaurantEntity.isPresent()) {
             throw new DataNotFoundException(DISH_ERROR_MESSAGE);
         }
-
 
 
         RestaurantEntity restaurant = restaurantEntity.get();

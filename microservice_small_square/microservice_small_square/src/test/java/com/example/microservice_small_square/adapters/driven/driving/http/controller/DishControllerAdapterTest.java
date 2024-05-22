@@ -44,11 +44,14 @@ import static org.mockito.Mockito.verify;
 
      @Test
      void testUpdateDish() {
-         AddDishUpdapteRequest request = new AddDishUpdapteRequest(1L,  165.8, "Updated Description");
+
+         Long idRestaurant = 1L;
+         AddDishUpdapteRequest request = new AddDishUpdapteRequest(1L,  165.8, "Updated Description", idRestaurant);
 
          ResponseEntity<Void> response = dishControllerAdapter.updateDish(request);
 
-         verify(dishServicePort).updateDish(request.getId(), Optional.of(request.getPrice()), Optional.of(request.getDescription()));
+         verify(dishServicePort).updateDish(request.getId(), Optional.of(request.getPrice()), Optional.of(request.getDescription()),
+                 idRestaurant);
          assertEquals(HttpStatus.OK, response.getStatusCode());
      }
 
@@ -56,11 +59,13 @@ import static org.mockito.Mockito.verify;
      void testChangeStatus() {
          Long id = 1L;
 
-         Mockito.doNothing().when(dishServicePort).changeStatus(id);
+         Long idRestaurant = 1L;
 
-         ResponseEntity<Void> response = dishControllerAdapter.changeStatus(id);
+         Mockito.doNothing().when(dishServicePort).changeStatus(id, idRestaurant);
 
-         verify(dishServicePort).changeStatus(id);
+         ResponseEntity<Void> response = dishControllerAdapter.changeStatus(id, idRestaurant);
+
+         verify(dishServicePort).changeStatus(id, idRestaurant);
          assertEquals(HttpStatus.OK, response.getStatusCode());
      }
 }

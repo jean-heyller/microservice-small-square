@@ -53,6 +53,7 @@ dependencies {
 	testImplementation 'org.hibernate.validator:hibernate-validator:7.0.1.Final'
 	testImplementation 'org.glassfish:javax.el:3.0.1-b09'
 
+
 }
 
 tasks.named('bootBuildImage') {

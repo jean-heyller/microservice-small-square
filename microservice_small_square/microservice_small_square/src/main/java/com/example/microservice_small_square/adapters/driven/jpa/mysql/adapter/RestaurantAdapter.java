@@ -15,15 +15,9 @@ public class RestaurantAdapter implements IRestaurantPersistencePort {
     private final IRestaurantEntityMapper restaurantEntityMapper;
     private final RoleValidationService roleValidationService;
 
-    private static final String MESSAGE_ERROR_USER = "the user ";
-    private static final String OWNER = "OWNER";
 
     @Override
     public void saveRestaurant(Restaurant restaurant) {
-        boolean validate =  roleValidationService.validateUserRole(restaurant.getOwnerId(), OWNER);
-        if(!validate){
-            throw new PermissionDeniedException(MESSAGE_ERROR_USER);
-        }
         restaurantRepository.save(restaurantEntityMapper.toEntity(restaurant));
     }
 }
