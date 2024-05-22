@@ -83,4 +83,33 @@ public class DishAdapter implements IDishPersistencePort {
 
         dishRepository.save(dishEntity);
     }
+
+    @Override
+    public void changeStatus(Long id) {
+        Optional<DishEntity> dishEntityOptional = dishRepository.findById(id);
+
+        if (!dishEntityOptional.isPresent()) {
+            throw new DataNotFoundException(DISH_NOT_FOUND_ERROR_MESSAGE);
+        }
+
+        DishEntity dishEntity = dishEntityOptional.get();
+
+        Long idRestaurant = dishEntity.getRestaurant().getId();
+
+        Optional<RestaurantEntity> restaurantEntity = restaurantRepository.findById(idRestaurant);
+
+        if (!restaurantEntity.isPresent()) {
+            throw new DataNotFoundException(DISH_NOT_FOUND_ERROR_MESSAGE);
+        }
+
+        RestaurantEntity restaurant = restaurantEntity.get();
+        Long userId = securityService.getUserIdFromContext();
+        if(restaurant.getOwnerId()!= userId){
+            throw new PermissionDeniedException(OWNER_ERROR_MESSAGE);
+        }
+
+        dishEntity.setIsActived(!dishEntity.getIsActived());
+
+        dishRepository.save(dishEntity);
+    }
 }

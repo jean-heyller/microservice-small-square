@@ -55,9 +55,28 @@ public class DishControllerAdapter {
                     content = @Content),
             @ApiResponse(responseCode = "404", description = "Dish not found",
                     content = @Content) })
-    @PostMapping("/update")
-    public ResponseEntity<Void> updateDish( @RequestBody @Valid AddDishUpdapteRequest request){
+    @PatchMapping("/update")
+    public ResponseEntity<Void> updateDish(@RequestBody @Valid AddDishUpdapteRequest request){
         dishServicePort.updateDish(request.getId(), Optional.of(request.getPrice()), Optional.of(request.getDescription()));
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+
+    @Operation(summary = "Change the status of a dish")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Dish status updated",
+                    content = { @Content(mediaType = "application/json") }),
+            @ApiResponse(responseCode = "400", description = "Invalid dish id supplied",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Dish not found",
+                    content = @Content),
+            @ApiResponse(responseCode = "403", description = "Permission denied",
+                    content = @Content)
+    })
+    @PreAuthorize("hasRole('OWNER')")
+    @PatchMapping("/status")
+    public ResponseEntity<Void> changeStatus(@RequestParam Long id){
+        dishServicePort.changeStatus(id);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 

@@ -52,5 +52,14 @@ import static org.mockito.Mockito.verify;
         verify(dishPersistencePort).updateDish(id, price, description);
     }
 
+     @Test
+     void testChangeStatus() {
+         Long id = 1L;
+
+         dishUseCase.changeStatus(id);
+
+         verify(dishPersistencePort).changeStatus(id);
+     }
+
 
 }

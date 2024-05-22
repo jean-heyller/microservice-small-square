@@ -19,6 +19,7 @@ import org.mockito.Mockito;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
  class DishAdapterTest {
@@ -133,4 +134,48 @@ import static org.mockito.Mockito.when;
 
          assertThrows(PermissionDeniedException.class, () -> dishAdapter.updateDish(id, price, description));
      }
+
+     @Test
+     void testChangeStatus() {
+         Long id = 1L;
+         Long userId = 1L;
+
+         RestaurantEntity restaurantEntity = new RestaurantEntity();
+         restaurantEntity.setOwnerId(userId);
+
+         DishEntity dishEntity = new DishEntity();
+         dishEntity.setIsActived(false);
+         dishEntity.setRestaurant(restaurantEntity);
+
+         when(dishRepository.findById(id)).thenReturn(Optional.of(dishEntity));
+         when(restaurantRepository.findById(restaurantEntity.getId())).thenReturn(Optional.of(restaurantEntity));
+         when(securityService.getUserIdFromContext()).thenReturn(userId);
+
+         dishAdapter.changeStatus(id);
+
+         assertTrue(dishEntity.getIsActived());
+         verify(dishRepository).save(dishEntity);
+     }
+
+     @Test
+     void testChangeStatusPermissionDenied() {
+         Long id = 1L;
+         Long userId = 1L;
+         Long ownerId = 2L;
+
+         RestaurantEntity restaurantEntity = new RestaurantEntity();
+         restaurantEntity.setId(1L);
+         restaurantEntity.setOwnerId(ownerId);
+
+         DishEntity dishEntity = new DishEntity();
+         dishEntity.setIsActived(false);
+         dishEntity.setRestaurant(restaurantEntity);
+
+         when(dishRepository.findById(id)).thenReturn(Optional.of(dishEntity));
+         when(restaurantRepository.findById(restaurantEntity.getId())).thenReturn(Optional.of(restaurantEntity));
+         when(securityService.getUserIdFromContext()).thenReturn(userId);
+
+         assertThrows(PermissionDeniedException.class, () -> dishAdapter.changeStatus(id));
+     }
+
 }

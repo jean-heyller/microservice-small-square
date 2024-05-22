@@ -51,4 +51,16 @@ import static org.mockito.Mockito.verify;
          verify(dishServicePort).updateDish(request.getId(), Optional.of(request.getPrice()), Optional.of(request.getDescription()));
          assertEquals(HttpStatus.OK, response.getStatusCode());
      }
+
+     @Test
+     void testChangeStatus() {
+         Long id = 1L;
+
+         Mockito.doNothing().when(dishServicePort).changeStatus(id);
+
+         ResponseEntity<Void> response = dishControllerAdapter.changeStatus(id);
+
+         verify(dishServicePort).changeStatus(id);
+         assertEquals(HttpStatus.OK, response.getStatusCode());
+     }
 }
