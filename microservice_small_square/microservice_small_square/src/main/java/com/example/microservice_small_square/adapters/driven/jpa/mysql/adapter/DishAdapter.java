@@ -5,6 +5,7 @@ import com.example.microservice_small_square.adapters.driven.jpa.mysql.entity.Di
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.entity.RestaurantEntity;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.DataNotFoundException;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.PermissionDeniedException;
+import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.ValueAlreadyExitsException;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.mapper.IDishEntityMapper;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.mapper.IRestaurantEntityMapper;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IDishRepository;
@@ -30,11 +31,11 @@ public class DishAdapter implements IDishPersistencePort {
 
     private final SecurityService securityService;
 
-    private static final String DISH_EXISTS_ERROR_MESSAGE = "The Restaurant";
+    private static final String RESTAURANT_EXISTS_ERROR_MESSAGE = "The Restaurant";
 
     private static final String OWNER_ERROR_MESSAGE = "the user";
 
-    private static final String DISH_NOT_FOUND_ERROR_MESSAGE = "The dish";
+    private static final String DISH_ERROR_MESSAGE = "The dish";
 
     @Override
     public void saveDish(Dish dish) {
@@ -43,12 +44,17 @@ public class DishAdapter implements IDishPersistencePort {
         Long idRestaurant = dish.getRestaurant().getId();
         Optional<RestaurantEntity> restaurantEntity = restaurantRepository.findById(idRestaurant);
         if (restaurantEntity.isEmpty()) {
-            throw new DataNotFoundException(DISH_EXISTS_ERROR_MESSAGE);
+            throw new DataNotFoundException(RESTAURANT_EXISTS_ERROR_MESSAGE);
         }
         RestaurantEntity restaurant = restaurantEntity.get();
         Long userId = securityService.getUserIdFromContext();
         if(restaurant.getOwnerId()!= userId){
             throw new PermissionDeniedException(OWNER_ERROR_MESSAGE);
+        }
+        Optional<DishEntity> dishEntity = dishRepository.findByRestaurantIdAndName(idRestaurant,dish.getName());
+
+        if (dishEntity.isPresent()) {
+            throw new ValueAlreadyExitsException(DISH_ERROR_MESSAGE);
         }
         dish.setRestaurant(restaurantEntityMapper.toModel(restaurant));
         dishRepository.save(dishEntityMapper.toEntity(dish));
@@ -59,7 +65,7 @@ public class DishAdapter implements IDishPersistencePort {
         Optional<DishEntity> dishEntityOptional = dishRepository.findById(id);
 
         if (!dishEntityOptional.isPresent()) {
-            throw new DataNotFoundException(DISH_NOT_FOUND_ERROR_MESSAGE);
+            throw new DataNotFoundException(DISH_ERROR_MESSAGE);
         }
 
         DishEntity dishEntity = dishEntityOptional.get();
@@ -69,7 +75,7 @@ public class DishAdapter implements IDishPersistencePort {
         Optional<RestaurantEntity> restaurantEntity = restaurantRepository.findById(idRestaurant);
 
         if (!restaurantEntity.isPresent()) {
-            throw new DataNotFoundException(DISH_NOT_FOUND_ERROR_MESSAGE);
+            throw new DataNotFoundException(DISH_ERROR_MESSAGE);
         }
 
         RestaurantEntity restaurant = restaurantEntity.get();
@@ -89,7 +95,7 @@ public class DishAdapter implements IDishPersistencePort {
         Optional<DishEntity> dishEntityOptional = dishRepository.findById(id);
 
         if (!dishEntityOptional.isPresent()) {
-            throw new DataNotFoundException(DISH_NOT_FOUND_ERROR_MESSAGE);
+            throw new DataNotFoundException(DISH_ERROR_MESSAGE);
         }
 
         DishEntity dishEntity = dishEntityOptional.get();
@@ -99,8 +105,10 @@ public class DishAdapter implements IDishPersistencePort {
         Optional<RestaurantEntity> restaurantEntity = restaurantRepository.findById(idRestaurant);
 
         if (!restaurantEntity.isPresent()) {
-            throw new DataNotFoundException(DISH_NOT_FOUND_ERROR_MESSAGE);
+            throw new DataNotFoundException(DISH_ERROR_MESSAGE);
         }
+
+
 
         RestaurantEntity restaurant = restaurantEntity.get();
         Long userId = securityService.getUserIdFromContext();

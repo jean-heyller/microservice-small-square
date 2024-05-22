@@ -2,6 +2,7 @@ package com.example.microservice_small_square.configuration.exceptionhandler;
 
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.DataNotFoundException;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.PermissionDeniedException;
+import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.ValueAlreadyExitsException;
 import com.example.microservice_small_square.domain.exception.SizeMinException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -59,6 +60,12 @@ public class ControllerAdvisor {
         public ResponseEntity<ExceptionResponse> handlePermissionDeniedException(PermissionDeniedException ex) {
             return ResponseEntity.badRequest().body(new ExceptionResponse(
                     ex.getMessage() + Constants.PERMISSION_DENIED_EXCEPTION_MESSAGE, HttpStatus.BAD_REQUEST.toString(), LocalDateTime.now()));
+        }
+
+        @ExceptionHandler(ValueAlreadyExitsException.class)
+        public ResponseEntity<ExceptionResponse> handleValueAlreadyExitsException(ValueAlreadyExitsException ex) {
+            return ResponseEntity.badRequest().body(new ExceptionResponse(
+                    ex.getMessage() + Constants.VALUE_ALREADY_EXISTS_EXCEPTION_MESSAGE, HttpStatus.BAD_REQUEST.toString(), LocalDateTime.now()));
         }
 
 
