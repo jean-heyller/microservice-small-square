@@ -14,5 +14,7 @@ public class Constants {
     public static final String SIZE_MIN_EXCEPTION_MESSAGE = "The price must be greater than 0";
 
     public static final String PERMISSION_DENIED_EXCEPTION_MESSAGE = "r does not have permissions for this function";
+
+    public static final String VALUE_ALREADY_EXISTS_EXCEPTION_MESSAGE = " indicated is already in use";
 }
 
