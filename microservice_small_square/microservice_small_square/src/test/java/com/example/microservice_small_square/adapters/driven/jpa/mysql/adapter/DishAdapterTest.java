@@ -102,12 +102,13 @@ import static org.mockito.Mockito.when;
 
          dishEntity.setRestaurant(restaurantEntity); // Asociamos el RestaurantEntity al DishEntity
 
-         when(dishRepository.findById(id)).thenReturn(Optional.of(dishEntity));
+         when(dishRepository.findByRestaurantIdAndId(1L, id)).thenReturn(Optional.of(dishEntity));
          when(restaurantRepository.findById(restaurantEntity.getId())).thenReturn(Optional.of(restaurantEntity));
          when(securityService.getUserIdFromContext()).thenReturn(1L);
-         dishAdapter.updateDish(id, price, description);
 
-         verify(dishRepository).findById(id);
+         dishAdapter.updateDish(id, price, description, 1L);
+
+         verify(dishRepository).findByRestaurantIdAndId(1L, id);
          verify(dishRepository).save(dishEntity);
      }
 
@@ -115,6 +116,7 @@ import static org.mockito.Mockito.when;
      @Test
      void testUpdateDishWithInvalidUserId() {
          Long id = 2L;
+         Long restaurantId = 1L;
          Optional<Double> price = Optional.of(20.0);
          Optional<String> description = Optional.of("New Updated Dish");
 
@@ -124,15 +126,15 @@ import static org.mockito.Mockito.when;
          dishEntity.setDescription(description.get());
 
          RestaurantEntity restaurantEntity = new RestaurantEntity();
-         restaurantEntity.setId(1L);
+         restaurantEntity.setId(restaurantId);
          restaurantEntity.setOwnerId(1L); // El ownerId es 1
          dishEntity.setRestaurant(restaurantEntity);
 
-         when(dishRepository.findById(id)).thenReturn(Optional.of(dishEntity));
+         when(dishRepository.findByRestaurantIdAndId(restaurantId, id)).thenReturn(Optional.of(dishEntity));
          when(restaurantRepository.findById(restaurantEntity.getId())).thenReturn(Optional.of(restaurantEntity));
          when(securityService.getUserIdFromContext()).thenReturn(2L); // El userId es 2, no coincide con el ownerId
 
-         assertThrows(PermissionDeniedException.class, () -> dishAdapter.updateDish(id, price, description));
+         assertThrows(PermissionDeniedException.class, () -> dishAdapter.updateDish(id, price, description, restaurantId));
      }
 
      @Test
@@ -147,11 +149,11 @@ import static org.mockito.Mockito.when;
          dishEntity.setIsActived(false);
          dishEntity.setRestaurant(restaurantEntity);
 
-         when(dishRepository.findById(id)).thenReturn(Optional.of(dishEntity));
+         when(dishRepository.findByRestaurantIdAndId(1L, id)).thenReturn(Optional.of(dishEntity));
          when(restaurantRepository.findById(restaurantEntity.getId())).thenReturn(Optional.of(restaurantEntity));
          when(securityService.getUserIdFromContext()).thenReturn(userId);
 
-         dishAdapter.changeStatus(id);
+         dishAdapter.changeStatus(id, 1L);
 
          assertTrue(dishEntity.getIsActived());
          verify(dishRepository).save(dishEntity);
@@ -162,20 +164,20 @@ import static org.mockito.Mockito.when;
          Long id = 1L;
          Long userId = 1L;
          Long ownerId = 2L;
+         Long restaurantId = 1L;
 
          RestaurantEntity restaurantEntity = new RestaurantEntity();
-         restaurantEntity.setId(1L);
+         restaurantEntity.setId(restaurantId);
          restaurantEntity.setOwnerId(ownerId);
 
          DishEntity dishEntity = new DishEntity();
          dishEntity.setIsActived(false);
          dishEntity.setRestaurant(restaurantEntity);
 
-         when(dishRepository.findById(id)).thenReturn(Optional.of(dishEntity));
+         when(dishRepository.findByRestaurantIdAndId(restaurantId, id)).thenReturn(Optional.of(dishEntity));
          when(restaurantRepository.findById(restaurantEntity.getId())).thenReturn(Optional.of(restaurantEntity));
          when(securityService.getUserIdFromContext()).thenReturn(userId);
 
-         assertThrows(PermissionDeniedException.class, () -> dishAdapter.changeStatus(id));
+         assertThrows(PermissionDeniedException.class, () -> dishAdapter.changeStatus(id, restaurantId));
      }
-
 }

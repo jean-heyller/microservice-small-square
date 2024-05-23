@@ -6,6 +6,6 @@ import java.util.Optional;
 
 public interface IDishServicePort {
     void saveDish(Dish dish);
-    void updateDish(Long id, Optional<Double> price, Optional<String> description);
-    void changeStatus(Long id);
+    void updateDish(Long id, Optional<Double> price, Optional<String> description, Long restaurantId);
+    void changeStatus(Long id, Long restaurantId);
 }

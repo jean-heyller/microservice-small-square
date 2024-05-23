@@ -4,13 +4,13 @@ import com.example.microservice_small_square.adapters.driven.driving.http.dto.re
 import com.example.microservice_small_square.adapters.driven.driving.http.dto.request.AddDishUpdapteRequest;
 import com.example.microservice_small_square.adapters.driven.driving.http.mapper.IDishRequestMapper;
 import com.example.microservice_small_square.domain.api.IDishServicePort;
-import com.example.microservice_small_square.domain.model.Dish;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.validation.Valid;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,8 +22,8 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/dish")
-@Validated
 @RequiredArgsConstructor
+@Validated
 public class DishControllerAdapter {
 
     private final IDishServicePort dishServicePort;
@@ -56,8 +56,8 @@ public class DishControllerAdapter {
             @ApiResponse(responseCode = "404", description = "Dish not found",
                     content = @Content) })
     @PatchMapping("/update")
-    public ResponseEntity<Void> updateDish(@RequestBody @Valid AddDishUpdapteRequest request){
-        dishServicePort.updateDish(request.getId(), Optional.of(request.getPrice()), Optional.of(request.getDescription()));
+    public ResponseEntity<Void> updateDish(@Valid @RequestBody AddDishUpdapteRequest request){
+        dishServicePort.updateDish(request.getId(), Optional.ofNullable(request.getPrice()), Optional.ofNullable(request.getDescription()), request.getRestaurantId());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
@@ -75,8 +75,8 @@ public class DishControllerAdapter {
     })
     @PreAuthorize("hasRole('OWNER')")
     @PatchMapping("/status")
-    public ResponseEntity<Void> changeStatus(@RequestParam Long id){
-        dishServicePort.changeStatus(id);
+    public ResponseEntity<Void> changeStatus(@RequestParam Long id, @RequestParam Long restaurantId){
+        dishServicePort.changeStatus(id, restaurantId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
