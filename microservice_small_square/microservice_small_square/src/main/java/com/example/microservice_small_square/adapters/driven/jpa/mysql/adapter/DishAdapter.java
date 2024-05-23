@@ -14,7 +14,10 @@ import com.example.microservice_small_square.adapters.driven.utils.services.Role
 import com.example.microservice_small_square.domain.model.Dish;
 import com.example.microservice_small_square.domain.spi.IDishPersistencePort;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 
+
+import java.util.List;
 import java.util.Optional;
 @RequiredArgsConstructor
 public class DishAdapter implements IDishPersistencePort {
@@ -119,5 +122,20 @@ public class DishAdapter implements IDishPersistencePort {
         dishEntity.setIsActived(!dishEntity.getIsActived());
 
         dishRepository.save(dishEntity);
+    }
+
+    @Override
+    public List<Dish> getAllDishes(Integer page, Integer size, String category) {
+        if (category == null) {
+            return dishRepository.findAll(PageRequest.of(page, size))
+                    .stream()
+                    .map(dishEntityMapper::toModel)
+                    .toList();
+        } else {
+            return dishRepository.findAllByCategory(category, PageRequest.of(page, size))
+                    .stream()
+                    .map(dishEntityMapper::toModel)
+                    .toList();
+        }
     }
 }

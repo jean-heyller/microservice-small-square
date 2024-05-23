@@ -15,14 +15,20 @@ import com.example.microservice_small_square.domain.model.Restaurant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
- class DishAdapterTest {
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+
+class DishAdapterTest {
 
     private IDishRepository dishRepository;
     private IDishEntityMapper dishEntityMapper;
@@ -180,4 +186,32 @@ import static org.mockito.Mockito.when;
 
          assertThrows(PermissionDeniedException.class, () -> dishAdapter.changeStatus(id, restaurantId));
      }
+
+    @Test
+    void testGetAllDishes() {
+
+        Integer page = 0;
+        Integer size = 10;
+        String category = "Test Category";
+        List<DishEntity> dishEntities = Arrays.asList(
+                new DishEntity(1L, "Test Dish 1", "Test Description 1", 10.0, "Test URL 1", "Test Category 1", true, new RestaurantEntity()),
+                new DishEntity(2L, "Test Dish 2", "Test Description 2", 20.0, "Test URL 2", "Test Category 2", true, new RestaurantEntity())
+        );
+        Page<DishEntity> pagedDishes = new PageImpl<>(dishEntities);
+        List<Dish> expectedDishes = dishEntities.stream()
+                .map(dishEntityMapper::toModel)
+                .toList();
+
+        when(dishRepository.findAll(PageRequest.of(page, size))).thenReturn(pagedDishes);
+        when(dishRepository.findAllByCategory(category, PageRequest.of(page, size))).thenReturn(pagedDishes);
+
+
+        List<Dish> actualDishesWithoutCategory = dishAdapter.getAllDishes(page, size, null);
+        List<Dish> actualDishesWithCategory = dishAdapter.getAllDishes(page, size, category);
+
+        verify(dishRepository, times(1)).findAll(PageRequest.of(page, size));
+        verify(dishRepository, times(1)).findAllByCategory(category, PageRequest.of(page, size));
+        assertEquals(expectedDishes, actualDishesWithoutCategory);
+        assertEquals(expectedDishes, actualDishesWithCategory);
+    }
 }
