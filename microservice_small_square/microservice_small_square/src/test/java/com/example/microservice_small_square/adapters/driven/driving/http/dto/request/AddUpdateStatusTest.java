@@ -8,7 +8,8 @@ class AddUpdateStatusTest {
     @Test
     void testGetStatus() {
         Boolean status = true;
-        AddUpdateStatus addUpdateStatus = new AddUpdateStatus(status);
+        Long restaurantId = 1L;
+        AddUpdateStatus addUpdateStatus = new AddUpdateStatus(status, restaurantId);
 
         assertEquals(status, addUpdateStatus.getStatus());
     }

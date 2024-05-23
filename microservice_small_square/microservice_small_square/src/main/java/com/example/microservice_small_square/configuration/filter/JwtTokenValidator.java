@@ -3,10 +3,14 @@ package com.example.microservice_small_square.configuration.filter;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.microservice_small_square.adapters.driven.security.CustomerUserDetail;
 import com.example.microservice_small_square.adapters.driven.utils.JwtUtils;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
+import java.util.Collection;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -18,14 +22,10 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
-import java.util.Collection;
-
 @RequiredArgsConstructor
 public class JwtTokenValidator extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
-
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,

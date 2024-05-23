@@ -10,4 +10,7 @@ import javax.validation.constraints.NotBlank;
 public class AddUpdateStatus {
     @NotBlank
     private final Boolean status;
+
+    @NotBlank
+    private final Long restaurantId;
 }

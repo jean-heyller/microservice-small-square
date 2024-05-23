@@ -18,6 +18,8 @@ import static org.mockito.Mockito.verify;
     private IDishPersistencePort dishPersistencePort;
     private DishUseCase dishUseCase;
 
+    private final Long idRestaurant = 1L;
+
     @BeforeEach
     public void setup() {
         dishPersistencePort = Mockito.mock(IDishPersistencePort.class);
@@ -47,18 +49,19 @@ import static org.mockito.Mockito.verify;
         Optional<Double> price = Optional.of(15.0);
         Optional<String> description = Optional.of("Updated Dish");
 
-        dishUseCase.updateDish(id, price, description);
 
-        verify(dishPersistencePort).updateDish(id, price, description);
+        dishUseCase.updateDish(id, price, description,idRestaurant);
+
+        verify(dishPersistencePort).updateDish(id, price, description,idRestaurant);
     }
 
      @Test
      void testChangeStatus() {
          Long id = 1L;
 
-         dishUseCase.changeStatus(id);
+         dishUseCase.changeStatus(id,idRestaurant);
 
-         verify(dishPersistencePort).changeStatus(id);
+         verify(dishPersistencePort).changeStatus(id,idRestaurant);
      }
 
 

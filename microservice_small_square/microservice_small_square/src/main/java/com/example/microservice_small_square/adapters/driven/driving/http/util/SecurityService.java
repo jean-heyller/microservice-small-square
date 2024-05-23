@@ -9,8 +9,7 @@ import org.springframework.stereotype.Service;
 public class SecurityService {
     public Long getUserIdFromContext() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof CustomerUserDetail) {
-            CustomerUserDetail userDetails = (CustomerUserDetail) authentication.getPrincipal();
+        if (authentication != null && authentication.getPrincipal() instanceof CustomerUserDetail userDetails) {
             return userDetails.getId();
         }
         return null;
