@@ -1,6 +1,6 @@
 package com.example.microservice_small_square.adapters.driven.jpa.mysql.adapter;
 
-import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.PermissionDeniedException;
+
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.mapper.IRestaurantEntityMapper;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IRestaurantRepository;
 import com.example.microservice_small_square.adapters.driven.utils.services.RoleValidationService;

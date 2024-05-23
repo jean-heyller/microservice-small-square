@@ -48,7 +48,7 @@ public class DishAdapter implements IDishPersistencePort {
         }
         RestaurantEntity restaurant = restaurantEntity.get();
         Long userId = securityService.getUserIdFromContext();
-        if(restaurant.getOwnerId()!= userId){
+        if(!restaurant.getOwnerId().equals(userId) ){
             throw new PermissionDeniedException(OWNER_ERROR_MESSAGE);
         }
         Optional<DishEntity> dishEntity = dishRepository.findByRestaurantIdAndName(idRestaurant,dish.getName());
@@ -81,7 +81,7 @@ public class DishAdapter implements IDishPersistencePort {
 
         RestaurantEntity restaurant = restaurantEntity.get();
         Long userId = securityService.getUserIdFromContext();
-        if(restaurant.getOwnerId()!= userId){
+        if(!restaurant.getOwnerId().equals(userId)){
             throw new PermissionDeniedException(OWNER_ERROR_MESSAGE);
         }
 
@@ -112,7 +112,7 @@ public class DishAdapter implements IDishPersistencePort {
 
         RestaurantEntity restaurant = restaurantEntity.get();
         Long userId = securityService.getUserIdFromContext();
-        if(restaurant.getOwnerId()!= userId){
+        if(!restaurant.getOwnerId().equals(userId)){
             throw new PermissionDeniedException(OWNER_ERROR_MESSAGE);
         }
 
