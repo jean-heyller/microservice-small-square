@@ -1,0 +1,20 @@
+package com.example.microservice_small_square.domain.api.usecase;
+
+import com.example.microservice_small_square.domain.api.IOrderServicePort;
+import com.example.microservice_small_square.domain.model.Order;
+import com.example.microservice_small_square.domain.spi.IOrderPersistencePort;
+
+public class OrderUseCase implements IOrderServicePort {
+
+    private IOrderPersistencePort iOrderPersistencePort;
+
+    public OrderUseCase(IOrderPersistencePort iOrderPersistencePort) {
+        this.iOrderPersistencePort = iOrderPersistencePort;
+    }
+    @Override
+    public void saveOrder(Order order) {
+        iOrderPersistencePort.saveOrder(order);
+    }
+
+
+}
