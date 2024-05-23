@@ -1,6 +1,7 @@
 package com.example.microservice_small_square.configuration.exceptionhandler;
 
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.DataNotFoundException;
+import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.PendingOrderExistsException;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.PermissionDeniedException;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.ValueAlreadyExitsException;
 import com.example.microservice_small_square.domain.exception.SizeMinException;
@@ -68,6 +69,11 @@ public class ControllerAdvisor {
                     ex.getMessage() + Constants.VALUE_ALREADY_EXISTS_EXCEPTION_MESSAGE, HttpStatus.BAD_REQUEST.toString(), LocalDateTime.now()));
         }
 
+        @ExceptionHandler(PendingOrderExistsException.class)
+        public ResponseEntity<ExceptionResponse> handlePendingOrderExistsException(PendingOrderExistsException ex) {
+            return ResponseEntity.badRequest().body(new ExceptionResponse(Constants.PENDING_STATUS_EXCEPTION_MESSAGE,
+                    HttpStatus.BAD_REQUEST.toString(), LocalDateTime.now()));
+        }
 
     }
 

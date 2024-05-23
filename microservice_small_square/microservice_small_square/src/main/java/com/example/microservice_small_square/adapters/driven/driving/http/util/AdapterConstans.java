@@ -43,6 +43,22 @@ public class AdapterConstans {
 
     public static final String FIELD_RESTAURANT_ID_NULL_MESSAGE = "`restaurant id` cannot be null";
 
+    public static final String FIELD_QUANTITY_SIZE_MESSAGE = "`quantity` should be greater than 0";
+
+    public static final String FIELD_DISH_ID_NULL_MESSAGE = "`dish id` cannot be null";
+
+    public static final String FIELD_DATE_FUTURE_MESSAGE = "`date` should be future or present";
+
+    public static final String FIELD_CHEF_ID_NULL_MESSAGE = "`chef id` cannot be null";
+
+    public static final String FIELD_DISHES_NULL_MESSAGE = "`dishes` cannot be null";
+
+    public static final String FIELD_CLIENT_ID_NULL_MESSAGE = "`client id` cannot be null";
+
+  public static final String FIELD_QUANTITY_NULL_MESSAGE = "'quantify cannot be null";
+
+
+
 
 
 
