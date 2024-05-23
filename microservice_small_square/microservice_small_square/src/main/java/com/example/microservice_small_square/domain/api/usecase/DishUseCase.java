@@ -35,4 +35,6 @@ public class DishUseCase implements IDishServicePort {
     public void changeStatus(Long id, Long restaurantId) {
         dishPersistencePort.changeStatus(id, restaurantId);
     }
+
+
 }

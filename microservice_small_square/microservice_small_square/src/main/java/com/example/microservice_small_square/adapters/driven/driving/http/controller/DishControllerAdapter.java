@@ -2,7 +2,7 @@ package com.example.microservice_small_square.adapters.driven.driving.http.contr
 
 import com.example.microservice_small_square.adapters.driven.driving.http.dto.request.AddDishRequest;
 import com.example.microservice_small_square.adapters.driven.driving.http.dto.request.AddDishUpdapteRequest;
-import com.example.microservice_small_square.adapters.driven.driving.http.mapper.IDishRequestMapper;
+import com.example.microservice_small_square.adapters.driven.driving.http.mapper.request.IDishRequestMapper;
 import com.example.microservice_small_square.domain.api.IDishServicePort;
 
 import io.swagger.v3.oas.annotations.Operation;
