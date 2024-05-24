@@ -16,6 +16,10 @@ spring:
       path: /api-docs
     swagger-ui:
       path: /swagger-ui
+  twilio:
+    account_sid: ${TWILIO_ACCOUNT_SID}
+    auth_token: ${TWILIO_AUTH_TOKEN}
+    trial_number: ${TWILIO_TRIAL_NUMBER}
 
 
 

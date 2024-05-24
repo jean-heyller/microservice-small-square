@@ -5,11 +5,13 @@ import com.example.microservice_small_square.adapters.driven.jpa.mysql.entity.Di
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.entity.OrderEntity;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.DataNotFoundException;
 
+import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.OrderStateUpdateException;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.mapper.IDishEntityMapper;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.mapper.IOrderEntityMapper;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IDishRepository;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IOrderRepository;
 
+import com.example.microservice_small_square.adapters.driven.utils.enums.OrderStatus;
 import com.example.microservice_small_square.domain.model.DishQuantify;
 import com.example.microservice_small_square.domain.model.Order;
 import com.example.microservice_small_square.domain.spi.IOrderPersistencePort;
@@ -46,7 +48,7 @@ public class OrderAdapter implements IOrderPersistencePort {
 
         List<OrderEntity> existingOrders = orderRepository.findByIdClientAndStatusIn(order.getIdClient(), allowed);
         if (!existingOrders.isEmpty()) {
-            throw new IllegalStateException("El cliente ya tiene un pedido en proceso");
+            throw new OrderStateUpdateException();
         }
 
         OrderEntity orderEntity = new OrderEntity();
@@ -79,5 +81,18 @@ public class OrderAdapter implements IOrderPersistencePort {
         List<OrderEntity> orderEntities = orderRepository.findByIdRestaurantAndStatusAndIdClient(idRestaurant, status, idClient, pagination).getContent();
 
         return orderEntityMapper.toModelList(orderEntities);
+    }
+
+    @Override
+    public void updateOrder(Order order) {
+        OrderEntity orderEntity = orderRepository.findByIdAndIdClientAndIdRestaurant(order.getId(), order.getIdClient(), order.getIdRestaurant())
+                .orElseThrow(() -> new DataNotFoundException(ERROR_MESSAGE));
+        OrderStatus currentStatus = OrderStatus.valueOf(orderEntity.getStatus());
+        OrderStatus nextStatus = currentStatus.next();
+        if (nextStatus == null) {
+            throw new OrderStateUpdateException();
+        }
+        orderEntity.setStatus(nextStatus.name());
+        orderRepository.save(orderEntity);
     }
 }

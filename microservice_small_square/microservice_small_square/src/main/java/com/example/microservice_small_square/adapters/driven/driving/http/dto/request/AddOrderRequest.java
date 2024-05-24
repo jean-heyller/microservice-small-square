@@ -3,6 +3,7 @@ package com.example.microservice_small_square.adapters.driven.driving.http.dto.r
 import com.example.microservice_small_square.adapters.driven.driving.http.dto.personalized.AddDishType;
 import com.example.microservice_small_square.adapters.driven.driving.http.util.AdapterConstans;
 
+import com.example.microservice_small_square.adapters.driven.driving.http.util.dish.DishConstans;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -26,11 +27,11 @@ public class AddOrderRequest {
     @NotNull(message = AdapterConstans.FIELD_CHEF_ID_NULL_MESSAGE)
     private Long idChef;
 
-    @NotNull(message = AdapterConstans.FIELD_DISHES_NULL_MESSAGE)
+    @NotNull(message = DishConstans.FIELD_DISHES_NULL_MESSAGE)
     @Size(min = 1)
     List<AddDishType> dishesQuantify;
 
-    @NotNull(message = AdapterConstans.FIELD_DISHES_NULL_MESSAGE)
+    @NotNull(message = DishConstans.FIELD_DISHES_NULL_MESSAGE)
     private Long idRestaurant;
 
     @NotNull(message = AdapterConstans.FIELD_CLIENT_ID_NULL_MESSAGE)

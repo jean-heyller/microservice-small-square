@@ -1,6 +1,7 @@
 package com.example.microservice_small_square.adapters.driven.driving.http.controller;
 
 import com.example.microservice_small_square.adapters.driven.driving.http.dto.request.AddOrderRequest;
+import com.example.microservice_small_square.adapters.driven.driving.http.dto.request.AddOrderUpdateRequest;
 import com.example.microservice_small_square.adapters.driven.driving.http.dto.response.OrderResponse;
 import com.example.microservice_small_square.adapters.driven.driving.http.mapper.request.IOrderRequestMapper;
 import com.example.microservice_small_square.adapters.driven.driving.http.mapper.response.IOrderResponseMapper;
@@ -65,5 +66,11 @@ public class OrderControllerAdapter {
                 idRestaurant,
                 idClient
         )));
+    }
+
+    @PatchMapping("/update")
+    public ResponseEntity<Void> updateOrder(@Valid @RequestBody AddOrderUpdateRequest request){
+        orderServicePort.updateOrder(orderRequestMapper.addUpdateRequestToOrder(request));
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

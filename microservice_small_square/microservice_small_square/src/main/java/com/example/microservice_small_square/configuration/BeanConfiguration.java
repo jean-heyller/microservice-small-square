@@ -14,12 +14,11 @@ import com.example.microservice_small_square.adapters.driven.utils.services.Role
 import com.example.microservice_small_square.domain.api.IDishServicePort;
 import com.example.microservice_small_square.domain.api.IOrderServicePort;
 import com.example.microservice_small_square.domain.api.IRestaurantServicePort;
-import com.example.microservice_small_square.domain.api.usecase.DishUseCase;
-import com.example.microservice_small_square.domain.api.usecase.OrderUseCase;
-import com.example.microservice_small_square.domain.api.usecase.RestaurantUseCase;
+import com.example.microservice_small_square.domain.api.usecase.*;
 import com.example.microservice_small_square.domain.spi.IDishPersistencePort;
 import com.example.microservice_small_square.domain.spi.IOrderPersistencePort;
 import com.example.microservice_small_square.domain.spi.IRestaurantPersistencePort;
+import com.example.microservice_small_square.domain.spi.ISmsSenderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,6 +43,8 @@ public class BeanConfiguration {
     private final IOrderRepository orderRepository;
 
     private final IOrderEntityMapper orderEntityMapper;
+
+
 
     @Bean
     public IOrderPersistencePort orderPersistencePort(){
@@ -74,6 +75,16 @@ public class BeanConfiguration {
     @Bean
     public IDishServicePort dishServicePort(){
         return new DishUseCase(dishPersistencePort());
+    }
+
+    @Bean
+    public ISmsSenderService smsSenderService(ISmsSenderService smsSenderService){
+        return smsSenderService;
+    }
+
+    @Bean
+    public ISmsSenderServicePort smsSenderServicePort(ISmsSenderService smsSenderService){
+        return new SmsSenderUseCase(smsSenderService);
     }
 
 
