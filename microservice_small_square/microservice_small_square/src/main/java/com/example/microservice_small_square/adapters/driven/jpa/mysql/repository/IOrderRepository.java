@@ -18,6 +18,8 @@ public interface IOrderRepository extends JpaRepository<OrderEntity, Long> {
 
     List<OrderEntity> findByIdClientAndStatusIn(Long idClient, List<String> statuses);
 
+    Optional<OrderEntity> findByIdAndIdClientAndIdRestaurant(Long id, Long idClient, Long idRestaurant);
+
 
 
 }

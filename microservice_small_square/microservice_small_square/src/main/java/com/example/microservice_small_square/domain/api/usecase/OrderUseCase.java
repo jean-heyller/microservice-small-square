@@ -23,5 +23,10 @@ public class OrderUseCase implements IOrderServicePort {
         return iOrderPersistencePort.getOrders(page, size,status, idRestaurant, idClient);
     }
 
+    @Override
+    public void updateOrder(Order order) {
+        iOrderPersistencePort.updateOrder(order);
+    }
+
 
 }

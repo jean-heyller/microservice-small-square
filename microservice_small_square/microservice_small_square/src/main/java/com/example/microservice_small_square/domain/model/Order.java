@@ -75,22 +75,4 @@ public class Order {
 
 
 
-    @Override
-    public String toString() {
-        return "Order{" +
-                "id=" + id +
-                ", date=" + date +
-                ", idChef=" + idChef +
-                ", dishesQuantify=" + dishes +
-                ", idClient=" + idClient +
-                ", idRestaurant=" + idRestaurant +
-                '}';
-    }
-
-
-
-
-
-
-
 }

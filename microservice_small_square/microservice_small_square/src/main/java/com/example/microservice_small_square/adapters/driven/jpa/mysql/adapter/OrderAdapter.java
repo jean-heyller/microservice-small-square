@@ -10,6 +10,7 @@ import com.example.microservice_small_square.adapters.driven.jpa.mysql.mapper.IO
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IDishRepository;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IOrderRepository;
 
+import com.example.microservice_small_square.adapters.driven.utils.enums.OrderStatus;
 import com.example.microservice_small_square.domain.model.DishQuantify;
 import com.example.microservice_small_square.domain.model.Order;
 import com.example.microservice_small_square.domain.spi.IOrderPersistencePort;
@@ -79,5 +80,18 @@ public class OrderAdapter implements IOrderPersistencePort {
         List<OrderEntity> orderEntities = orderRepository.findByIdRestaurantAndStatusAndIdClient(idRestaurant, status, idClient, pagination).getContent();
 
         return orderEntityMapper.toModelList(orderEntities);
+    }
+
+    @Override
+    public void updateOrder(Order order) {
+        OrderEntity orderEntity = orderRepository.findByIdAndIdClientAndIdRestaurant(order.getId(), order.getIdClient(), order.getIdRestaurant())
+                .orElseThrow(() -> new DataNotFoundException("Order"));
+        OrderStatus currentStatus = OrderStatus.valueOf(orderEntity.getStatus());
+        OrderStatus nextStatus = currentStatus.next();
+        if (nextStatus == null) {
+            throw new IllegalStateException("No further status update is possible.");
+        }
+        orderEntity.setStatus(nextStatus.name());
+        orderRepository.save(orderEntity);
     }
 }
