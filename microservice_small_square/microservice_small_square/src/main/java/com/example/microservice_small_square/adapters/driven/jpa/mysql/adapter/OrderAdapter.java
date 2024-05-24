@@ -5,6 +5,7 @@ import com.example.microservice_small_square.adapters.driven.jpa.mysql.entity.Di
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.entity.OrderEntity;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.DataNotFoundException;
 
+import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.OrderStateUpdateException;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.mapper.IDishEntityMapper;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.mapper.IOrderEntityMapper;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IDishRepository;
@@ -47,7 +48,7 @@ public class OrderAdapter implements IOrderPersistencePort {
 
         List<OrderEntity> existingOrders = orderRepository.findByIdClientAndStatusIn(order.getIdClient(), allowed);
         if (!existingOrders.isEmpty()) {
-            throw new IllegalStateException("El cliente ya tiene un pedido en proceso");
+            throw new OrderStateUpdateException();
         }
 
         OrderEntity orderEntity = new OrderEntity();
@@ -85,11 +86,11 @@ public class OrderAdapter implements IOrderPersistencePort {
     @Override
     public void updateOrder(Order order) {
         OrderEntity orderEntity = orderRepository.findByIdAndIdClientAndIdRestaurant(order.getId(), order.getIdClient(), order.getIdRestaurant())
-                .orElseThrow(() -> new DataNotFoundException("Order"));
+                .orElseThrow(() -> new DataNotFoundException(ERROR_MESSAGE));
         OrderStatus currentStatus = OrderStatus.valueOf(orderEntity.getStatus());
         OrderStatus nextStatus = currentStatus.next();
         if (nextStatus == null) {
-            throw new IllegalStateException("No further status update is possible.");
+            throw new OrderStateUpdateException();
         }
         orderEntity.setStatus(nextStatus.name());
         orderRepository.save(orderEntity);
