@@ -10,10 +10,12 @@ import com.example.microservice_small_square.adapters.driven.jpa.mysql.mapper.IR
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IDishRepository;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IOrderRepository;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IRestaurantRepository;
+import com.example.microservice_small_square.adapters.driven.sms.SmMService;
 import com.example.microservice_small_square.adapters.driven.utils.services.RoleValidationService;
 import com.example.microservice_small_square.domain.api.IDishServicePort;
 import com.example.microservice_small_square.domain.api.IOrderServicePort;
 import com.example.microservice_small_square.domain.api.IRestaurantServicePort;
+import com.example.microservice_small_square.domain.api.ISmsSenderServicePort;
 import com.example.microservice_small_square.domain.api.usecase.*;
 import com.example.microservice_small_square.domain.spi.IDishPersistencePort;
 import com.example.microservice_small_square.domain.spi.IOrderPersistencePort;
@@ -44,11 +46,15 @@ public class BeanConfiguration {
 
     private final IOrderEntityMapper orderEntityMapper;
 
+    private final SmMService smsSenderService;
+
+
+
 
 
     @Bean
     public IOrderPersistencePort orderPersistencePort(){
-        return new OrderAdapter(dishRepository,dishEntityMapper,orderRepository,orderEntityMapper);
+        return new OrderAdapter(dishRepository,dishEntityMapper,orderRepository,orderEntityMapper,smsSenderService,roleValidationService);
     }
 
     @Bean

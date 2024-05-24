@@ -86,6 +86,12 @@ public class ControllerAdvisor {
                Constants.ORDER_STATUS_EXCEPTION_MESSAGE, HttpStatus.BAD_REQUEST.toString(), LocalDateTime.now()));
         }
 
+        @ExceptionHandler(NoMessagesFoundException.class)
+        public ResponseEntity<ExceptionResponse> handleNoMessagesFoundException(NoMessagesFoundException ex) {
+            return ResponseEntity.badRequest().body(new ExceptionResponse(
+                    Constants.NO_MESSAGES_FOUND_EXCEPTION_MESSAGE, HttpStatus.BAD_REQUEST.toString(), LocalDateTime.now()));
+        }
+
     }
 
 

@@ -5,13 +5,16 @@ import com.example.microservice_small_square.adapters.driven.jpa.mysql.entity.Di
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.entity.OrderEntity;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.DataNotFoundException;
 
+import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.NoMessagesFoundException;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.OrderStateUpdateException;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.mapper.IDishEntityMapper;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.mapper.IOrderEntityMapper;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IDishRepository;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IOrderRepository;
 
+import com.example.microservice_small_square.adapters.driven.sms.SmMService;
 import com.example.microservice_small_square.adapters.driven.utils.enums.OrderStatus;
+import com.example.microservice_small_square.adapters.driven.utils.services.RoleValidationService;
 import com.example.microservice_small_square.domain.model.DishQuantify;
 import com.example.microservice_small_square.domain.model.Order;
 import com.example.microservice_small_square.domain.spi.IOrderPersistencePort;
@@ -39,6 +42,9 @@ public class OrderAdapter implements IOrderPersistencePort {
 
     private static final String ERROR_MESSAGE = "The dish ";
 
+    private final SmMService smmService;
+
+    private final RoleValidationService roleValidationService;
 
 
     @Override
@@ -89,10 +95,21 @@ public class OrderAdapter implements IOrderPersistencePort {
                 .orElseThrow(() -> new DataNotFoundException(ERROR_MESSAGE));
         OrderStatus currentStatus = OrderStatus.valueOf(orderEntity.getStatus());
         OrderStatus nextStatus = currentStatus.next();
+
         if (nextStatus == null) {
             throw new OrderStateUpdateException();
         }
+
+        if (nextStatus.name().equals("READY")) {
+            String number = roleValidationService.getPhoneNumber(order.getIdClient());
+            String message = smmService.retrieveMessage(number);
+            if (message == null) {
+                throw new NoMessagesFoundException();
+            }
+        }
+
         orderEntity.setStatus(nextStatus.name());
         orderRepository.save(orderEntity);
     }
+
 }

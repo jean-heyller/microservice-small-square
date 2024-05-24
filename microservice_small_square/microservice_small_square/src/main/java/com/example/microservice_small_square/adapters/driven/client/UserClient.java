@@ -13,4 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface UserClient {
     @GetMapping(value = "/user/getName", consumes = MediaType.APPLICATION_JSON_VALUE)
     String getUserRoles(@RequestParam("id") Long id);
+
+    @GetMapping(value = "/user/getPhoneNumber", consumes = MediaType.APPLICATION_JSON_VALUE)
+    String getPhoneNumber(@RequestParam("id") Long id);
 }
