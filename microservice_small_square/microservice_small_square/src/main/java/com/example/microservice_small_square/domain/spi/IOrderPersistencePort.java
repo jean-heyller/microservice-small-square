@@ -10,4 +10,6 @@ public interface IOrderPersistencePort {
     List<Order> getOrders(Integer page, Integer size,String status, Long idRestaurant, Long idClient);
 
     public void updateOrder(Order order);
+
+    public void deleteOrder(Order order);
 }

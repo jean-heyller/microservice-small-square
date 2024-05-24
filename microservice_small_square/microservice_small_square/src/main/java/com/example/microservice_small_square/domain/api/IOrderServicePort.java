@@ -11,4 +11,6 @@ public interface IOrderServicePort {
 
     public void updateOrder(Order order);
 
+    public void deleteOrder(Order order);
+
 }
