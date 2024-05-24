@@ -73,4 +73,12 @@ public class OrderControllerAdapter {
         orderServicePort.updateOrder(orderRequestMapper.addUpdateRequestToOrder(request));
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+    @PatchMapping("/delete")
+    public ResponseEntity<Void> deleteOrder(@Valid @RequestBody AddOrderUpdateRequest addOrderUpdateRequest){
+        orderServicePort.deleteOrder(orderRequestMapper.addUpdateRequestToOrder(addOrderUpdateRequest));
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+
 }

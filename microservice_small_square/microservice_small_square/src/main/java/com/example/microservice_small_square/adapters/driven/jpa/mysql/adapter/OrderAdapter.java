@@ -17,6 +17,7 @@ import com.example.microservice_small_square.adapters.driven.utils.enums.OrderSt
 import com.example.microservice_small_square.adapters.driven.utils.services.RoleValidationService;
 import com.example.microservice_small_square.domain.model.DishQuantify;
 import com.example.microservice_small_square.domain.model.Order;
+import com.example.microservice_small_square.domain.model.SmsSender;
 import com.example.microservice_small_square.domain.spi.IOrderPersistencePort;
 import lombok.RequiredArgsConstructor;
 
@@ -45,6 +46,8 @@ public class OrderAdapter implements IOrderPersistencePort {
     private final SmMService smmService;
 
     private final RoleValidationService roleValidationService;
+
+    private static final String ORDER_ERROR_MESSAGE = "Your order can't be cancelled. It's already in preparation.r";
 
 
     @Override
@@ -109,6 +112,25 @@ public class OrderAdapter implements IOrderPersistencePort {
         }
 
         orderEntity.setStatus(nextStatus.name());
+        orderRepository.save(orderEntity);
+    }
+
+    @Override
+    public void deleteOrder(Order order) {
+        String STATUS_PENDING = "PENDING";
+        String STATUS_CANCELLED = "CANCELLED";
+        String PHONE_NUMBER_PREFIX = "+57";
+        OrderEntity orderEntity = orderRepository.findByIdAndIdClientAndIdRestaurant(order.getId(), order.getIdClient(), order.getIdRestaurant())
+                .orElseThrow(() -> new DataNotFoundException(ERROR_MESSAGE));
+        String status = orderEntity.getStatus();
+        if (status.equals(STATUS_PENDING)){
+            orderEntity.setStatus(STATUS_CANCELLED);
+        }else{
+            String number = roleValidationService.getPhoneNumber(order.getIdClient()).toString();
+            String numberWithPrefix = PHONE_NUMBER_PREFIX + number;
+            SmsSender smsSender = new SmsSender(numberWithPrefix, ORDER_ERROR_MESSAGE);
+            smmService.sendSms(smsSender);
+        }
         orderRepository.save(orderEntity);
     }
 

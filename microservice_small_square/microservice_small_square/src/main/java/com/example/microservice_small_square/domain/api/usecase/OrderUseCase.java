@@ -28,5 +28,10 @@ public class OrderUseCase implements IOrderServicePort {
         iOrderPersistencePort.updateOrder(order);
     }
 
+    @Override
+    public void deleteOrder(Order order) {
+        iOrderPersistencePort.deleteOrder(order);
+    }
+
 
 }
