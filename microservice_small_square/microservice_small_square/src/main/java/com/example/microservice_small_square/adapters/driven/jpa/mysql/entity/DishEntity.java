@@ -10,6 +10,7 @@ import lombok.Setter;
 import javax.persistence.*;
 
 
+
 @Entity
 @Table(name = "dish")
 @AllArgsConstructor
@@ -42,4 +43,7 @@ public class DishEntity {
     @ManyToOne
     @JoinColumn(name = "id_restaurant")
     private RestaurantEntity restaurant;
+
+
+
 }

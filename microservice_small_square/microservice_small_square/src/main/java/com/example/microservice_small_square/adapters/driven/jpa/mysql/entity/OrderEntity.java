@@ -35,7 +35,7 @@ public class OrderEntity {
     @Column
     String status = "PENDING";
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(
             name = "orders_dish",
             joinColumns = @JoinColumn(name = "orders_id", referencedColumnName = "id"),
