@@ -1,22 +1,27 @@
 package com.example.microservice_small_square.adapters.driven.jpa.mysql.adapter;
 
+
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.entity.DishEntity;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.entity.OrderEntity;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.DataNotFoundException;
-import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.PendingOrderExistsException;
+
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.mapper.IDishEntityMapper;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.mapper.IOrderEntityMapper;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IDishRepository;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IOrderRepository;
-import com.example.microservice_small_square.domain.model.Dish;
+
 import com.example.microservice_small_square.domain.model.DishQuantify;
 import com.example.microservice_small_square.domain.model.Order;
 import com.example.microservice_small_square.domain.spi.IOrderPersistencePort;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
+
 @RequiredArgsConstructor
 public class OrderAdapter implements IOrderPersistencePort {
 
@@ -30,28 +35,49 @@ public class OrderAdapter implements IOrderPersistencePort {
 
     private static final String STATUS_PENDING = "PENDING";
 
-    private  static final  String ERROR_MESSAGE = "The dish ";
+    private static final String ERROR_MESSAGE = "The dish ";
+
+
+
     @Override
     public void saveOrder(Order order) {
-        List<DishQuantify> dishes = order.getDishes();
 
-        if (orderRepository.findByIdRestaurantAndStatus(order.getIdRestaurant(), STATUS_PENDING).isPresent()) {
-            throw new PendingOrderExistsException();
+        ArrayList<String> allowed = new ArrayList<>(Arrays.asList(STATUS_PENDING, "READY", "PREPARATION"));
+
+        List<OrderEntity> existingOrders = orderRepository.findByIdClientAndStatusIn(order.getIdClient(), allowed);
+        if (!existingOrders.isEmpty()) {
+            throw new IllegalStateException("El cliente ya tiene un pedido en proceso");
         }
 
+        OrderEntity orderEntity = new OrderEntity();
 
+        orderEntity.setDate(order.getDate());
+        orderEntity.setIdChef(order.getIdChef());
+        orderEntity.setIdClient(order.getIdClient());
+        orderEntity.setIdRestaurant(order.getIdRestaurant());
+        orderEntity.setStatus(STATUS_PENDING);
 
         List<DishEntity> dishEntities = new ArrayList<>();
-        for (DishQuantify dishQuantify : dishes) {
-            DishEntity dishEntity = dishRepository.findByRestaurantIdAndId(order.getIdRestaurant(),dishQuantify.getIdDish())
+        for (DishQuantify dishQuantify : order.getDishesQuantify()) {
+            DishEntity dishEntity = dishRepository.findByRestaurantIdAndId(order.getIdRestaurant(), dishQuantify.getIdDish())
                     .orElseThrow(() -> new DataNotFoundException(ERROR_MESSAGE));
             for (int i = 0; i < dishQuantify.getQuantity(); i++) {
                 dishEntities.add(dishEntity);
             }
         }
 
-        OrderEntity orderEntity = orderEntityMapper.toEntity(order);
-        orderEntity.setDishes(dishEntities);
+        List<DishEntity> dishEntitiesCopy = new ArrayList<>(dishEntities);
+
+        orderEntity.setDishes(dishEntitiesCopy);
         orderRepository.save(orderEntity);
+    }
+
+
+    @Override
+    public List<Order> getOrders(Integer page, Integer size, String status, Long idRestaurant, Long idClient) {
+        Pageable pagination = PageRequest.of(page, size);
+        List<OrderEntity> orderEntities = orderRepository.findByIdRestaurantAndStatusAndIdClient(idRestaurant, status, idClient, pagination).getContent();
+
+        return orderEntityMapper.toModelList(orderEntities);
     }
 }

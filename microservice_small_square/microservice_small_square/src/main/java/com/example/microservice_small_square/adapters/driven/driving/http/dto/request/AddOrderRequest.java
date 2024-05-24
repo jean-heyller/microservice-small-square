@@ -2,10 +2,10 @@ package com.example.microservice_small_square.adapters.driven.driving.http.dto.r
 
 import com.example.microservice_small_square.adapters.driven.driving.http.dto.personalized.AddDishType;
 import com.example.microservice_small_square.adapters.driven.driving.http.util.AdapterConstans;
-import com.example.microservice_small_square.domain.model.Dish;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+
 
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotNull;
@@ -28,7 +28,7 @@ public class AddOrderRequest {
 
     @NotNull(message = AdapterConstans.FIELD_DISHES_NULL_MESSAGE)
     @Size(min = 1)
-    List<AddDishType> dishes;
+    List<AddDishType> dishesQuantify;
 
     @NotNull(message = AdapterConstans.FIELD_DISHES_NULL_MESSAGE)
     private Long idRestaurant;

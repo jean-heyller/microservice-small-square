@@ -13,31 +13,47 @@ public class Order {
 
     private final Long idChef;
 
-    List<DishQuantify> dishes;
+    private List<DishQuantify> dishesQuantify;
+
+
+
+    private List<Dish> dishes;
+
+    public List<DishQuantify> getDishesQuantify() {
+        return dishesQuantify;
+    }
+
+    public void setDishesQuantify(List<DishQuantify> dishesQuantify) {
+        this.dishesQuantify = dishesQuantify;
+    }
 
     private final Long idClient;
-
-
 
     public Long getIdRestaurant() {
         return idRestaurant;
     }
 
-    private final Long idRestaurant;
-
-
-    public void setDishes(List<DishQuantify> dishes) {
+    public void setDishes(List<Dish> dishes) {
         this.dishes = dishes;
     }
 
+    public List<Dish> getDishes() {
+        return dishes;
+    }
+
+    private final Long idRestaurant;
+
+
+
+
     public Order(Long id, Long idClient, LocalDate date,
-                 Long idChef, List<DishQuantify> dishes,
+                 Long idChef, List<DishQuantify> dishesQuantify,
                  Long idRestaurant) {
         this.id = id;
         this.idClient = idClient;
         this.date = date;
         this.idChef = idChef;
-        this.dishes = dishes;
+        this.dishesQuantify = dishesQuantify;
         this.idRestaurant = idRestaurant;
     }
 
@@ -57,8 +73,18 @@ public class Order {
         return idChef;
     }
 
-    public List<DishQuantify> getDishes() {
-        return dishes;
+
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "id=" + id +
+                ", date=" + date +
+                ", idChef=" + idChef +
+                ", dishesQuantify=" + dishes +
+                ", idClient=" + idClient +
+                ", idRestaurant=" + idRestaurant +
+                '}';
     }
 
 

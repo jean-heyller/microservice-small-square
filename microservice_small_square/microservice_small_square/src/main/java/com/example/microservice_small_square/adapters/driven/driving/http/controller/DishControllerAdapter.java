@@ -101,4 +101,5 @@ public class DishControllerAdapter {
         return ResponseEntity.ok(dishResponseMapper.toDishResponseList(dishServicePort.getAllDishes(page, size, category)));
     }
 
+
 }

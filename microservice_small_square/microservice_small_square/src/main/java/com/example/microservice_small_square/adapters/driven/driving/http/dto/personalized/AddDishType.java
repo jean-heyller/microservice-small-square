@@ -1,6 +1,7 @@
 package com.example.microservice_small_square.adapters.driven.driving.http.dto.personalized;
 
 import com.example.microservice_small_square.adapters.driven.driving.http.util.AdapterConstans;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
