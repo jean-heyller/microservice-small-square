@@ -117,16 +117,16 @@ public class OrderAdapter implements IOrderPersistencePort {
 
     @Override
     public void deleteOrder(Order order) {
-        String STATUS_PENDING = "PENDING";
         String STATUS_CANCELLED = "CANCELLED";
         String PHONE_NUMBER_PREFIX = "+57";
-        OrderEntity orderEntity = orderRepository.findByIdAndIdClientAndIdRestaurant(order.getId(), order.getIdClient(), order.getIdRestaurant())
+        OrderEntity orderEntity = orderRepository.findByIdAndIdClientAndIdRestaurant(order.getId(),
+                        order.getIdClient(), order.getIdRestaurant())
                 .orElseThrow(() -> new DataNotFoundException(ERROR_MESSAGE));
         String status = orderEntity.getStatus();
         if (status.equals(STATUS_PENDING)){
             orderEntity.setStatus(STATUS_CANCELLED);
         }else{
-            String number = roleValidationService.getPhoneNumber(order.getIdClient()).toString();
+            String number = roleValidationService.getPhoneNumber(order.getIdClient());
             String numberWithPrefix = PHONE_NUMBER_PREFIX + number;
             SmsSender smsSender = new SmsSender(numberWithPrefix, ORDER_ERROR_MESSAGE);
             smmService.sendSms(smsSender);

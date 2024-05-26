@@ -14,6 +14,7 @@ import com.example.microservice_small_square.adapters.driven.utils.services.Role
 import com.example.microservice_small_square.domain.model.Dish;
 import com.example.microservice_small_square.domain.model.DishQuantify;
 import com.example.microservice_small_square.domain.model.Order;
+import com.example.microservice_small_square.domain.model.SmsSender;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -27,8 +28,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class OrderAdapterTest {
@@ -146,6 +146,42 @@ class OrderAdapterTest {
         when(orderRepository.findByIdAndIdClientAndIdRestaurant(anyLong(), anyLong(), anyLong())).thenReturn(Optional.of(orderEntity));
 
         assertThrows(OrderStateUpdateException.class, () -> orderAdapter.updateOrder(order));
+    }
+
+    @Test
+    void testDeleteOrder_StatusPending() {
+        // Arrange
+        Order order = new Order(1L, 1L, LocalDate.now(), 1L, Collections.emptyList(), 1L);
+        OrderEntity orderEntity = new OrderEntity();
+        orderEntity.setStatus("PENDING");
+
+        when(orderRepository.findByIdAndIdClientAndIdRestaurant(anyLong(), anyLong(), anyLong())).thenReturn(Optional.of(orderEntity));
+
+
+        orderAdapter.deleteOrder(order);
+
+
+        verify(orderRepository).save(orderEntity);
+        assertEquals("CANCELLED", orderEntity.getStatus());
+    }
+
+    @Test
+    void testDeleteOrder_StatusNotPending() {
+        // Arrange
+        Order order = new Order(1L, 1L, LocalDate.now(), 1L, Collections.emptyList(), 1L);
+        OrderEntity orderEntity = new OrderEntity();
+        orderEntity.setStatus("READY");
+
+        when(orderRepository.findByIdAndIdClientAndIdRestaurant(anyLong(), anyLong(), anyLong())).thenReturn(Optional.of(orderEntity));
+        when(roleValidationService.getPhoneNumber(anyLong())).thenReturn("1234567890");
+
+
+        orderAdapter.deleteOrder(order);
+
+
+        verify(orderRepository).save(orderEntity);
+        verify(smmService).sendSms(any(SmsSender.class));
+        assertEquals("READY", orderEntity.getStatus());
     }
 
 }

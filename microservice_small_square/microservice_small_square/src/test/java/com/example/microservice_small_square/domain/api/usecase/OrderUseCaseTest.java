@@ -50,6 +50,15 @@ class OrderUseCaseTest {
         verify(orderPersistencePort).updateOrder(order);
     }
 
+    @Test
+    void testDeleteOrder() {
+        Order order = new Order(1L, 1L, LocalDate.now(), 1L, Collections.emptyList(), 1L);
+
+        orderUseCase.deleteOrder(order);
+
+        verify(orderPersistencePort).deleteOrder(order);
+    }
+
 
 
 }
