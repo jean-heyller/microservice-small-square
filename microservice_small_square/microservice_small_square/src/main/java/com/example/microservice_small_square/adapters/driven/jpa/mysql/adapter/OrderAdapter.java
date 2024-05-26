@@ -1,6 +1,7 @@
 package com.example.microservice_small_square.adapters.driven.jpa.mysql.adapter;
 
 
+import com.example.microservice_small_square.adapters.driven.driving.http.mapper.request.ITraceabilityRequestMapper;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.entity.DishEntity;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.entity.OrderEntity;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.DataNotFoundException;
@@ -12,17 +13,22 @@ import com.example.microservice_small_square.adapters.driven.jpa.mysql.mapper.IO
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IDishRepository;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IOrderRepository;
 
+import com.example.microservice_small_square.adapters.driven.mongodb.adapter.TraceabilityMongodbAdapter;
+import com.example.microservice_small_square.adapters.driven.mongodb.mapper.ITraceabilityEntityMapper;
 import com.example.microservice_small_square.adapters.driven.sms.SmMService;
 import com.example.microservice_small_square.adapters.driven.utils.enums.OrderStatus;
 import com.example.microservice_small_square.adapters.driven.utils.services.RoleValidationService;
+import com.example.microservice_small_square.domain.api.ITraceabilityServicePort;
 import com.example.microservice_small_square.domain.model.DishQuantify;
 import com.example.microservice_small_square.domain.model.Order;
 import com.example.microservice_small_square.domain.model.SmsSender;
+import com.example.microservice_small_square.domain.model.Traceability;
 import com.example.microservice_small_square.domain.spi.IOrderPersistencePort;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,6 +54,13 @@ public class OrderAdapter implements IOrderPersistencePort {
     private final RoleValidationService roleValidationService;
 
     private static final String ORDER_ERROR_MESSAGE = "Your order can't be cancelled. It's already in preparation.r";
+
+
+    private final ITraceabilityRequestMapper traceabilityRequestMapper;
+
+    private final ITraceabilityServicePort traceabilityMongodbAdapter;
+
+
 
 
     @Override
@@ -93,11 +106,14 @@ public class OrderAdapter implements IOrderPersistencePort {
     }
 
     @Override
+    @Transactional
     public void updateOrder(Order order) {
         OrderEntity orderEntity = orderRepository.findByIdAndIdClientAndIdRestaurant(order.getId(), order.getIdClient(), order.getIdRestaurant())
                 .orElseThrow(() -> new DataNotFoundException(ERROR_MESSAGE));
         OrderStatus currentStatus = OrderStatus.valueOf(orderEntity.getStatus());
         OrderStatus nextStatus = currentStatus.next();
+
+        OrderStatus previousStatus = currentStatus.previous();
 
         if (nextStatus == null) {
             throw new OrderStateUpdateException();
@@ -111,8 +127,22 @@ public class OrderAdapter implements IOrderPersistencePort {
             }
         }
 
+        Traceability traceability = traceabilityRequestMapper.toModelOrder(order);
+
+        String emailEmployee = roleValidationService.getEmail(order.getIdChef());
+        String emailClient = roleValidationService.getEmail(order.getIdClient());
+
+        traceability.setEmailClient(emailClient);
+        traceability.setEmailEmployee(emailEmployee);
+
+        traceability.setStatus(currentStatus.name());
+        traceability.setStatusBefore(previousStatus.name());
+        traceability.setStatusAfter(nextStatus.name());
+
         orderEntity.setStatus(nextStatus.name());
         orderRepository.save(orderEntity);
+
+        traceabilityMongodbAdapter.saveTraceability(traceability);
     }
 
     @Override

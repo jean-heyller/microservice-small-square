@@ -1,5 +1,6 @@
 package com.example.microservice_small_square.configuration;
 
+import com.example.microservice_small_square.adapters.driven.driving.http.mapper.request.ITraceabilityRequestMapper;
 import com.example.microservice_small_square.adapters.driven.driving.http.util.SecurityService;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.adapter.DishAdapter;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.adapter.OrderAdapter;
@@ -49,6 +50,12 @@ public class BeanConfiguration {
 
     private final ITraceabilityEntityMapper traceabilityEntityMapper;
 
+    private final ITraceabilityRequestMapper traceabilityRequestMapper;
+
+
+
+
+
 
 
 
@@ -56,7 +63,8 @@ public class BeanConfiguration {
 
     @Bean
     public IOrderPersistencePort orderPersistencePort(){
-        return new OrderAdapter(dishRepository,dishEntityMapper,orderRepository,orderEntityMapper,smsSenderService,roleValidationService);
+        return new OrderAdapter(dishRepository,dishEntityMapper,orderRepository,orderEntityMapper,smsSenderService,
+                roleValidationService,traceabilityRequestMapper,traceabilityServicePort());
     }
 
     @Bean
@@ -104,6 +112,8 @@ public class BeanConfiguration {
     public ITraceabilityServicePort traceabilityServicePort(){
         return new TraceabilityUseCase(traceabilityPersistencePort());
     }
+
+
 
 
 
