@@ -167,7 +167,7 @@ class OrderAdapterTest {
 
     @Test
     void testDeleteOrder_StatusNotPending() {
-        // Arrange
+
         Order order = new Order(1L, 1L, LocalDate.now(), 1L, Collections.emptyList(), 1L);
         OrderEntity orderEntity = new OrderEntity();
         orderEntity.setStatus("READY");

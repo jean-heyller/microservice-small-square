@@ -21,6 +21,13 @@ spring:
     auth_token: ${TWILIO_AUTH_TOKEN}
     trial_number: ${TWILIO_TRIAL_NUMBER}
 
+    data:
+      mongodb:
+        host: localhost
+        port: 27017
+        database: small-square
+
+
 
 
 
