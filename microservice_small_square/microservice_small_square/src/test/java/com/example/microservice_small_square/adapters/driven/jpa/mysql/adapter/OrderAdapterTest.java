@@ -1,4 +1,5 @@
 package com.example.microservice_small_square.adapters.driven.jpa.mysql.adapter;
+import com.example.microservice_small_square.adapters.driven.driving.http.mapper.request.ITraceabilityRequestMapper;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.entity.DishEntity;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.entity.OrderEntity;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.DataNotFoundException;
@@ -11,6 +12,7 @@ import com.example.microservice_small_square.adapters.driven.jpa.mysql.repositor
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IOrderRepository;
 import com.example.microservice_small_square.adapters.driven.sms.SmMService;
 import com.example.microservice_small_square.adapters.driven.utils.services.RoleValidationService;
+import com.example.microservice_small_square.domain.api.ITraceabilityServicePort;
 import com.example.microservice_small_square.domain.model.Dish;
 import com.example.microservice_small_square.domain.model.DishQuantify;
 import com.example.microservice_small_square.domain.model.Order;
@@ -51,12 +53,19 @@ class OrderAdapterTest {
     @Mock
     private IOrderEntityMapper orderEntityMapper;
 
+    @Mock
+    private ITraceabilityServicePort traceabilityServicePort;
+
+    private ITraceabilityRequestMapper traceabilityRequestMapper;
+
     private OrderAdapter orderAdapter;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        orderAdapter = new OrderAdapter(dishRepository, dishEntityMapper, orderRepository, orderEntityMapper, smmService, roleValidationService);
+        orderAdapter = new OrderAdapter(dishRepository, dishEntityMapper, orderRepository,
+                orderEntityMapper, smmService, roleValidationService,
+                traceabilityRequestMapper, traceabilityServicePort);
     }
 
 
