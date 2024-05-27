@@ -45,4 +45,15 @@ public class RoleValidationService {
             throw new DataNotFoundException(MESSAGE);
         }
     }
+
+    public String getEmail(Long userId) {
+        try {
+            String JsonEmail = userClient.getEmail(userId);
+           return JsonEmail;
+        } catch (FeignException.BadRequest e) {
+            throw new DataNotFoundException(MESSAGE_USER_NOT_FOUND);
+        } catch (Exception e) {
+            throw new DataNotFoundException(MESSAGE);
+        }
+    }
 }

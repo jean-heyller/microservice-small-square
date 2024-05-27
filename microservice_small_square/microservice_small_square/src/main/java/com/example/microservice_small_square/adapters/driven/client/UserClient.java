@@ -16,4 +16,7 @@ public interface UserClient {
 
     @GetMapping(value = "/user/getPhoneNumber", consumes = MediaType.APPLICATION_JSON_VALUE)
     String getPhoneNumber(@RequestParam("id") Long id);
+
+    @GetMapping(value = "/user/getEmail", consumes = MediaType.APPLICATION_JSON_VALUE)
+    String getEmail(@RequestParam("id") Long id);
 }

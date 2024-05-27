@@ -1,5 +1,6 @@
 package com.example.microservice_small_square.configuration;
 
+import com.example.microservice_small_square.adapters.driven.driving.http.mapper.request.ITraceabilityRequestMapper;
 import com.example.microservice_small_square.adapters.driven.driving.http.util.SecurityService;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.adapter.DishAdapter;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.adapter.OrderAdapter;
@@ -10,17 +11,14 @@ import com.example.microservice_small_square.adapters.driven.jpa.mysql.mapper.IR
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IDishRepository;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IOrderRepository;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IRestaurantRepository;
+import com.example.microservice_small_square.adapters.driven.mongodb.adapter.TraceabilityMongodbAdapter;
+import com.example.microservice_small_square.adapters.driven.mongodb.mapper.ITraceabilityEntityMapper;
+import com.example.microservice_small_square.adapters.driven.mongodb.repository.ITraceabilityRepository;
 import com.example.microservice_small_square.adapters.driven.sms.SmMService;
 import com.example.microservice_small_square.adapters.driven.utils.services.RoleValidationService;
-import com.example.microservice_small_square.domain.api.IDishServicePort;
-import com.example.microservice_small_square.domain.api.IOrderServicePort;
-import com.example.microservice_small_square.domain.api.IRestaurantServicePort;
-import com.example.microservice_small_square.domain.api.ISmsSenderServicePort;
+import com.example.microservice_small_square.domain.api.*;
 import com.example.microservice_small_square.domain.api.usecase.*;
-import com.example.microservice_small_square.domain.spi.IDishPersistencePort;
-import com.example.microservice_small_square.domain.spi.IOrderPersistencePort;
-import com.example.microservice_small_square.domain.spi.IRestaurantPersistencePort;
-import com.example.microservice_small_square.domain.spi.ISmsSenderService;
+import com.example.microservice_small_square.domain.spi.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,13 +46,25 @@ public class BeanConfiguration {
 
     private final SmMService smsSenderService;
 
+    private final ITraceabilityRepository traceabilityRepository;
+
+    private final ITraceabilityEntityMapper traceabilityEntityMapper;
+
+    private final ITraceabilityRequestMapper traceabilityRequestMapper;
+
+
+
+
+
+
 
 
 
 
     @Bean
     public IOrderPersistencePort orderPersistencePort(){
-        return new OrderAdapter(dishRepository,dishEntityMapper,orderRepository,orderEntityMapper,smsSenderService,roleValidationService);
+        return new OrderAdapter(dishRepository,dishEntityMapper,orderRepository,orderEntityMapper,smsSenderService,
+                roleValidationService,traceabilityRequestMapper,traceabilityServicePort());
     }
 
     @Bean
@@ -92,6 +102,18 @@ public class BeanConfiguration {
     public ISmsSenderServicePort smsSenderServicePort(ISmsSenderService smsSenderService){
         return new SmsSenderUseCase(smsSenderService);
     }
+
+    @Bean
+    public ITraceabilityPersistencePort traceabilityPersistencePort(){
+        return new TraceabilityMongodbAdapter(traceabilityRepository,traceabilityEntityMapper);
+    }
+
+    @Bean
+    public ITraceabilityServicePort traceabilityServicePort(){
+        return new TraceabilityUseCase(traceabilityPersistencePort());
+    }
+
+
 
 
 

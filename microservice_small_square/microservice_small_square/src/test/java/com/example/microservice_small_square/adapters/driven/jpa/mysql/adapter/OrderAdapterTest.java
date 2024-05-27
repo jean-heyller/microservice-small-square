@@ -1,4 +1,5 @@
 package com.example.microservice_small_square.adapters.driven.jpa.mysql.adapter;
+import com.example.microservice_small_square.adapters.driven.driving.http.mapper.request.ITraceabilityRequestMapper;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.entity.DishEntity;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.entity.OrderEntity;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.DataNotFoundException;
@@ -11,10 +12,8 @@ import com.example.microservice_small_square.adapters.driven.jpa.mysql.repositor
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IOrderRepository;
 import com.example.microservice_small_square.adapters.driven.sms.SmMService;
 import com.example.microservice_small_square.adapters.driven.utils.services.RoleValidationService;
-import com.example.microservice_small_square.domain.model.Dish;
-import com.example.microservice_small_square.domain.model.DishQuantify;
-import com.example.microservice_small_square.domain.model.Order;
-import com.example.microservice_small_square.domain.model.SmsSender;
+import com.example.microservice_small_square.domain.api.ITraceabilityServicePort;
+import com.example.microservice_small_square.domain.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -51,12 +50,19 @@ class OrderAdapterTest {
     @Mock
     private IOrderEntityMapper orderEntityMapper;
 
+    @Mock
+    private ITraceabilityServicePort traceabilityServicePort;
+    @Mock
+    private ITraceabilityRequestMapper traceabilityRequestMapper;
+
     private OrderAdapter orderAdapter;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        orderAdapter = new OrderAdapter(dishRepository, dishEntityMapper, orderRepository, orderEntityMapper, smmService, roleValidationService);
+        orderAdapter = new OrderAdapter(dishRepository, dishEntityMapper, orderRepository,
+                orderEntityMapper, smmService, roleValidationService,
+                traceabilityRequestMapper, traceabilityServicePort);
     }
 
 
@@ -109,18 +115,28 @@ class OrderAdapterTest {
     }
 
     @Test
-     void testUpdateOrder_Success() {
+    void testUpdateOrder_Success() {
+        // Arrange
         DishQuantify dishQuantify = new DishQuantify(1L,1);
         Order order = new Order(1L,1L, LocalDate.now(),1L, Collections.singletonList(dishQuantify),1L);
         OrderEntity orderEntity = new OrderEntity();
         orderEntity.setStatus("PREPARATION");
+
+        Traceability traceability = new Traceability(1L, "id_client", "emailClient", LocalDate.now(), "statusBefore", "statusAfter", 1L, "emailEmployee", 1L, "status");
+
+
         when(orderRepository.findByIdAndIdClientAndIdRestaurant(anyLong(), anyLong(), anyLong())).thenReturn(Optional.of(orderEntity));
         when(roleValidationService.getPhoneNumber(anyLong())).thenReturn("1234567890");
         when(smmService.retrieveMessage(anyString())).thenReturn("Test message");
+        when(traceabilityRequestMapper.toModelOrder(order)).thenReturn(traceability);
 
+        // Act
         orderAdapter.updateOrder(order);
 
-        verify(orderRepository).save(any(OrderEntity.class));
+        // Assert
+        verify(orderRepository).save(orderEntity);
+        verify(traceabilityServicePort).saveTraceability(traceability);
+        assertEquals("READY", orderEntity.getStatus());
     }
 
 
@@ -167,7 +183,7 @@ class OrderAdapterTest {
 
     @Test
     void testDeleteOrder_StatusNotPending() {
-        // Arrange
+
         Order order = new Order(1L, 1L, LocalDate.now(), 1L, Collections.emptyList(), 1L);
         OrderEntity orderEntity = new OrderEntity();
         orderEntity.setStatus("READY");
@@ -182,6 +198,25 @@ class OrderAdapterTest {
         verify(orderRepository).save(orderEntity);
         verify(smmService).sendSms(any(SmsSender.class));
         assertEquals("READY", orderEntity.getStatus());
+    }
+
+    @Test
+    void testUpdateOrder_Transactional() {
+        // Arrange
+        DishQuantify dishQuantify = new DishQuantify(1L,1);
+        Order order = new Order(1L,1L, LocalDate.now(),1L, Collections.singletonList(dishQuantify),1L);
+        OrderEntity orderEntity = new OrderEntity();
+        orderEntity.setStatus("PREPARATION");
+
+        when(orderRepository.findByIdAndIdClientAndIdRestaurant(anyLong(), anyLong(), anyLong())).thenReturn(Optional.of(orderEntity));
+        when(roleValidationService.getPhoneNumber(anyLong())).thenReturn("1234567890");
+        when(smmService.retrieveMessage(anyString())).thenThrow(new NoMessagesFoundException());
+
+
+        assertThrows(NoMessagesFoundException.class, () -> orderAdapter.updateOrder(order));
+
+        verify(orderRepository, never()).save(any(OrderEntity.class));
+        verify(traceabilityServicePort, never()).saveTraceability(any(Traceability.class));
     }
 
 }
