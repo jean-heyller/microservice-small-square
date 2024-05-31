@@ -2,7 +2,9 @@ package com.example.microservice_small_square.adapters.driven.driving.http.contr
 
 import com.example.microservice_small_square.adapters.driven.driving.http.dto.request.AddDishRequest;
 import com.example.microservice_small_square.adapters.driven.driving.http.dto.request.AddDishUpdapteRequest;
-import com.example.microservice_small_square.adapters.driven.driving.http.mapper.IDishRequestMapper;
+import com.example.microservice_small_square.adapters.driven.driving.http.dto.response.DishResponse;
+import com.example.microservice_small_square.adapters.driven.driving.http.mapper.request.IDishRequestMapper;
+import com.example.microservice_small_square.adapters.driven.driving.http.mapper.response.IDishResponseMapper;
 import com.example.microservice_small_square.domain.api.IDishServicePort;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,6 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -28,6 +31,8 @@ public class DishControllerAdapter {
 
     private final IDishServicePort dishServicePort;
     private final IDishRequestMapper dishRequestMapper;
+
+    private final IDishResponseMapper dishResponseMapper;
 
     @Operation(summary = "Add a new dish")
     @ApiResponses(value = {
@@ -79,5 +84,22 @@ public class DishControllerAdapter {
         dishServicePort.changeStatus(id, restaurantId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+    @Operation(summary = "Get all dishes", description = "Get all dishes with optional category filtering and pagination")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = DishResponse.class)) }),
+            @ApiResponse(responseCode = "400", description = "Invalid parameters supplied",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content) })
+    @GetMapping("/all")
+    public ResponseEntity<List<DishResponse>> getAllDishes(@RequestParam(defaultValue = "0") Integer page,
+                                                           @RequestParam(defaultValue = "10") Integer size,
+                                                           @RequestParam(required = false) String category){
+        return ResponseEntity.ok(dishResponseMapper.toDishResponseList(dishServicePort.getAllDishes(page, size, category)));
+    }
+
 
 }

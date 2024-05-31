@@ -11,12 +11,16 @@ spring:
       ddl-auto: update
       dialect: org.hibernate.dialect.MySQL5Dialect
 
-
   springdoc:
     api-docs:
       path: /api-docs
     swagger-ui:
       path: /swagger-ui
+  twilio:
+    account_sid: ${TWILIO_ACCOUNT_SID}
+    auth_token: ${TWILIO_AUTH_TOKEN}
+    trial_number: ${TWILIO_TRIAL_NUMBER}
+
 
 
 

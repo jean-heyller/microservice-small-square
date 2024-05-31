@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
  class DishUseCaseTest {
@@ -62,6 +63,17 @@ import static org.mockito.Mockito.verify;
          dishUseCase.changeStatus(id,idRestaurant);
 
          verify(dishPersistencePort).changeStatus(id,idRestaurant);
+     }
+
+     @Test
+     void testGetAllDishes() {
+         Integer page = 0;
+         Integer size = 10;
+         String category = "Test Category";
+
+         dishUseCase.getAllDishes(page, size, category);
+
+         verify(dishPersistencePort, times(1)).getAllDishes(page, size, category);
      }
 
 

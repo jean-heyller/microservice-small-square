@@ -34,4 +34,15 @@ public class RoleValidationService {
             throw new DataNotFoundException(MESSAGE);
         }
     }
+
+    public String getPhoneNumber(Long userId) {
+        try {
+            String JsonPhoneNumber = userClient.getPhoneNumber(userId);
+           return JsonPhoneNumber;
+        } catch (FeignException.BadRequest e) {
+            throw new DataNotFoundException(MESSAGE_USER_NOT_FOUND);
+        } catch (Exception e) {
+            throw new DataNotFoundException(MESSAGE);
+        }
+    }
 }

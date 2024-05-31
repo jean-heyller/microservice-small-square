@@ -16,5 +16,13 @@ public class Constants {
     public static final String PERMISSION_DENIED_EXCEPTION_MESSAGE = "r does not have permissions for this function";
 
     public static final String VALUE_ALREADY_EXISTS_EXCEPTION_MESSAGE = " indicated is already in use";
+
+    public static final String PENDING_STATUS_EXCEPTION_MESSAGE = "There is already an order pending for this restaurant\"";
+
+    public static final String NULL_FIELD_EXCEPTION_MESSAGE = "Field %s can not be null";
+
+    public static final String ORDER_STATUS_EXCEPTION_MESSAGE = " is not in a valid state for this operation";
+
+    public static final String NO_MESSAGES_FOUND_EXCEPTION_MESSAGE = "No messages found";
 }
 

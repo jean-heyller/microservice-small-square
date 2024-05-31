@@ -1,8 +1,6 @@
 package com.example.microservice_small_square.configuration.exceptionhandler;
 
-import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.DataNotFoundException;
-import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.PermissionDeniedException;
-import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.ValueAlreadyExitsException;
+import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.*;
 import com.example.microservice_small_square.domain.exception.SizeMinException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,6 +27,8 @@ public class ControllerAdvisor {
                 return Constants.EMPTY_FIELD_EXCEPTION_MESSAGE;
             case "Size":
                 return Constants.MAX_CHAR_EXCEPTION_MESSAGE;
+            case "NotNull":
+                return Constants.NULL_FIELD_EXCEPTION_MESSAGE;
             default:
                 return error.getDefaultMessage();
         }
@@ -68,6 +68,29 @@ public class ControllerAdvisor {
                     ex.getMessage() + Constants.VALUE_ALREADY_EXISTS_EXCEPTION_MESSAGE, HttpStatus.BAD_REQUEST.toString(), LocalDateTime.now()));
         }
 
+        @ExceptionHandler(PendingOrderExistsException.class)
+        public ResponseEntity<ExceptionResponse> handlePendingOrderExistsException(PendingOrderExistsException ex) {
+            return ResponseEntity.badRequest().body(new ExceptionResponse(Constants.PENDING_STATUS_EXCEPTION_MESSAGE,
+                    HttpStatus.BAD_REQUEST.toString(), LocalDateTime.now()));
+        }
+
+        @ExceptionHandler(OrderStateUpdateException.class)
+        public ResponseEntity<ExceptionResponse> handleOrderStateUpdateException(OrderStateUpdateException ex) {
+            return ResponseEntity.badRequest().body(new ExceptionResponse(
+                    Constants.ORDER_STATUS_EXCEPTION_MESSAGE, HttpStatus.BAD_REQUEST.toString(), LocalDateTime.now()));
+        }
+
+        @ExceptionHandler(OrderAlreadyInProgressException.class)
+        public ResponseEntity<ExceptionResponse> handleOrderAlreadyInProgressException(OrderAlreadyInProgressException ex) {
+            return ResponseEntity.badRequest().body(new ExceptionResponse(
+               Constants.ORDER_STATUS_EXCEPTION_MESSAGE, HttpStatus.BAD_REQUEST.toString(), LocalDateTime.now()));
+        }
+
+        @ExceptionHandler(NoMessagesFoundException.class)
+        public ResponseEntity<ExceptionResponse> handleNoMessagesFoundException(NoMessagesFoundException ex) {
+            return ResponseEntity.badRequest().body(new ExceptionResponse(
+                    Constants.NO_MESSAGES_FOUND_EXCEPTION_MESSAGE, HttpStatus.BAD_REQUEST.toString(), LocalDateTime.now()));
+        }
 
     }
 

@@ -5,6 +5,7 @@ import com.example.microservice_small_square.domain.exception.SizeMinException;
 import com.example.microservice_small_square.domain.model.Dish;
 import com.example.microservice_small_square.domain.spi.IDishPersistencePort;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -35,4 +36,11 @@ public class DishUseCase implements IDishServicePort {
     public void changeStatus(Long id, Long restaurantId) {
         dishPersistencePort.changeStatus(id, restaurantId);
     }
+
+    @Override
+    public List<Dish> getAllDishes(Integer page, Integer size, String category) {
+        return  dishPersistencePort.getAllDishes(page, size, category);
+    }
+
+
 }
