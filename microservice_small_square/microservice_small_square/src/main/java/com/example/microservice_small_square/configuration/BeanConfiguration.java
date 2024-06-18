@@ -14,8 +14,8 @@ import com.example.microservice_small_square.adapters.driven.jpa.mysql.repositor
 import com.example.microservice_small_square.adapters.driven.mongodb.adapter.TraceabilityMongodbAdapter;
 import com.example.microservice_small_square.adapters.driven.mongodb.mapper.ITraceabilityEntityMapper;
 import com.example.microservice_small_square.adapters.driven.mongodb.repository.ITraceabilityRepository;
-import com.example.microservice_small_square.adapters.driven.sms.SmMService;
-import com.example.microservice_small_square.adapters.driven.utils.services.RoleValidationService;
+
+import com.example.microservice_small_square.adapters.driven.utils.services.ClientService;
 import com.example.microservice_small_square.domain.api.*;
 import com.example.microservice_small_square.domain.api.usecase.*;
 import com.example.microservice_small_square.domain.spi.*;
@@ -31,7 +31,7 @@ public class BeanConfiguration {
 
     private final IRestaurantRepository restaurantRepository;
 
-    private final RoleValidationService roleValidationService;
+    private final ClientService clientService;
 
     private final IDishEntityMapper dishEntityMapper;
 
@@ -44,7 +44,7 @@ public class BeanConfiguration {
 
     private final IOrderEntityMapper orderEntityMapper;
 
-    private final SmMService smsSenderService;
+
 
     private final ITraceabilityRepository traceabilityRepository;
 
@@ -56,15 +56,10 @@ public class BeanConfiguration {
 
 
 
-
-
-
-
-
     @Bean
     public IOrderPersistencePort orderPersistencePort(){
-        return new OrderAdapter(dishRepository,dishEntityMapper,orderRepository,orderEntityMapper,smsSenderService,
-                roleValidationService,traceabilityRequestMapper,traceabilityServicePort());
+        return new OrderAdapter(dishRepository,dishEntityMapper,orderRepository,orderEntityMapper,
+                clientService,traceabilityRequestMapper,traceabilityServicePort());
     }
 
     @Bean
@@ -75,7 +70,7 @@ public class BeanConfiguration {
 
     @Bean
     public IRestaurantPersistencePort restaurantPersistencePort(){
-        return new RestaurantAdapter(restaurantRepository,restaurantEntityMapper,roleValidationService);
+        return new RestaurantAdapter(restaurantRepository,restaurantEntityMapper, clientService);
     }
     @Bean
     public IRestaurantServicePort restaurantServicePort(){
@@ -85,7 +80,7 @@ public class BeanConfiguration {
     @Bean
     public IDishPersistencePort dishPersistencePort(){
         return new DishAdapter(dishRepository,dishEntityMapper,restaurantRepository,restaurantEntityMapper,
-                roleValidationService,securityService);
+                clientService,securityService);
     }
 
     @Bean
@@ -93,15 +88,6 @@ public class BeanConfiguration {
         return new DishUseCase(dishPersistencePort());
     }
 
-    @Bean
-    public ISmsSenderService smsSenderService(ISmsSenderService smsSenderService){
-        return smsSenderService;
-    }
-
-    @Bean
-    public ISmsSenderServicePort smsSenderServicePort(ISmsSenderService smsSenderService){
-        return new SmsSenderUseCase(smsSenderService);
-    }
 
     @Bean
     public ITraceabilityPersistencePort traceabilityPersistencePort(){
@@ -112,10 +98,6 @@ public class BeanConfiguration {
     public ITraceabilityServicePort traceabilityServicePort(){
         return new TraceabilityUseCase(traceabilityPersistencePort());
     }
-
-
-
-
 
 
 }

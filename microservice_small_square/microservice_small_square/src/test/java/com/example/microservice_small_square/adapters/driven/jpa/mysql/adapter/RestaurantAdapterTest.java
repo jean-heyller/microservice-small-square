@@ -1,11 +1,10 @@
 package com.example.microservice_small_square.adapters.driven.jpa.mysql.adapter;
 
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.entity.RestaurantEntity;
-import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.DataNotFoundException;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.PermissionDeniedException;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.mapper.IRestaurantEntityMapper;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IRestaurantRepository;
-import com.example.microservice_small_square.adapters.driven.utils.services.RoleValidationService;
+import com.example.microservice_small_square.adapters.driven.utils.services.ClientService;
 import com.example.microservice_small_square.domain.model.Restaurant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +24,7 @@ import static org.mockito.Mockito.*;
 class RestaurantAdapterTest {
     private IRestaurantRepository repository;
     private IRestaurantEntityMapper mapper;
-    private RoleValidationService roleValidationService;
+    private ClientService clientService;
     private RestaurantAdapter adapter;
 
 
@@ -34,8 +33,8 @@ class RestaurantAdapterTest {
     public void setUp() {
         repository = Mockito.mock(IRestaurantRepository.class);
         mapper = Mockito.mock(IRestaurantEntityMapper.class);
-        roleValidationService = Mockito.mock(RoleValidationService.class);
-        adapter = new RestaurantAdapter(repository, mapper, roleValidationService);
+        clientService = Mockito.mock(ClientService.class);
+        adapter = new RestaurantAdapter(repository, mapper, clientService);
     }
 
 
@@ -43,7 +42,7 @@ class RestaurantAdapterTest {
     @Test
      void testSaveRestaurant_WithInvalidRole() {
         Restaurant restaurant = new Restaurant(1L, "Test Name", "Test Nit", "Test Address", "Test Phone", "Test URL", 1L);
-        when(roleValidationService.validateUserRole(restaurant.getOwnerId(), "OWNER")).thenReturn(false);
+        when(clientService.validateUserRole(restaurant.getOwnerId(), "OWNER")).thenReturn(false);
 
         assertThrows(PermissionDeniedException.class, () -> adapter.saveRestaurant(restaurant));
     }

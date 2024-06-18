@@ -13,4 +13,6 @@ public interface IOrderServicePort {
 
     public void deleteOrder(Order order);
 
+    public void validaCode(String number, String code, String idOrder);
+
 }

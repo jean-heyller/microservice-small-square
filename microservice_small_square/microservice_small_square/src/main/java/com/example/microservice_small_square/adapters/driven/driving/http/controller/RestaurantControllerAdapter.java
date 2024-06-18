@@ -41,7 +41,7 @@ public class RestaurantControllerAdapter {
                     content = @Content),
             @ApiResponse(responseCode = "409", description = "Restaurant already exists",
                     content = @Content) })
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'OWNER')")
     @PostMapping("/")
     public ResponseEntity<Void> addRestaurant(@Valid @RequestBody AddRestaurantRequest request){
         restaurantServicePort.saveRestaurant(restaurantRequestMapper.addRequestToRestaurant(request));

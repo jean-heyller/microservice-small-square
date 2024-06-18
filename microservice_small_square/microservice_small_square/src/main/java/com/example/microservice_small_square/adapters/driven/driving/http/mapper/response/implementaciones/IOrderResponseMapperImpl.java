@@ -8,7 +8,7 @@ import com.example.microservice_small_square.domain.model.Order;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+
 @Service
 public class IOrderResponseMapperImpl implements IOrderResponseMapper {
     private final IDishResponseMapper dishResponseMapper;
@@ -27,6 +27,6 @@ public class IOrderResponseMapperImpl implements IOrderResponseMapper {
     public List<OrderResponse> toOrderResponseList(List<Order> orders) {
         return orders.stream()
                 .map(this::toOrderResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

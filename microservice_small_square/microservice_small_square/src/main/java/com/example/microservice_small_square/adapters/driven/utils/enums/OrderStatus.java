@@ -38,7 +38,7 @@ public enum OrderStatus {
     DELIVERED {
         @Override
         public OrderStatus next() {
-            return null;
+            return DELIVERED;
         }
 
         @Override

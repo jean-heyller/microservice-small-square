@@ -69,15 +69,46 @@ public class OrderControllerAdapter {
     }
 
     @PatchMapping("/update")
+    @Operation(summary = "Update an existing order")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Order updated",
+                    content = @Content),
+            @ApiResponse(responseCode = "400", description = "Invalid order data supplied",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Order not found",
+                    content = @Content)})
     public ResponseEntity<Void> updateOrder(@Valid @RequestBody AddOrderUpdateRequest request){
         orderServicePort.updateOrder(orderRequestMapper.addUpdateRequestToOrder(request));
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PatchMapping("/delete")
+    @Operation(summary = "Delete an existing order")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Order deleted",
+                    content = @Content),
+            @ApiResponse(responseCode = "400", description = "Invalid order data supplied",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Order not found",
+                    content = @Content)})
     public ResponseEntity<Void> deleteOrder(@Valid @RequestBody AddOrderUpdateRequest addOrderUpdateRequest){
         orderServicePort.deleteOrder(orderRequestMapper.addUpdateRequestToOrder(addOrderUpdateRequest));
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+
+    @PostMapping("/validaCode")
+    @Operation(summary = "Validate order code")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Code validated",
+                    content = @Content),
+            @ApiResponse(responseCode = "400", description = "Invalid parameters supplied",
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = "Order not found",
+                    content = @Content)})
+    public ResponseEntity<Void> validaCode(@RequestParam String number, String code, String idOrder){
+        orderServicePort.validaCode(number, code, idOrder);
+        return ResponseEntity.ok().build();
     }
 
 

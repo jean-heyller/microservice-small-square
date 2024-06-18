@@ -10,7 +10,7 @@ import com.example.microservice_small_square.adapters.driven.jpa.mysql.mapper.ID
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.mapper.IRestaurantEntityMapper;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IDishRepository;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IRestaurantRepository;
-import com.example.microservice_small_square.adapters.driven.utils.services.RoleValidationService;
+import com.example.microservice_small_square.adapters.driven.utils.services.ClientService;
 import com.example.microservice_small_square.domain.model.Dish;
 import com.example.microservice_small_square.domain.spi.IDishPersistencePort;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class DishAdapter implements IDishPersistencePort {
 
     private final IRestaurantEntityMapper restaurantEntityMapper;
 
-    private final RoleValidationService roleValidationService;
+    private final ClientService clientService;
 
     private final SecurityService securityService;
 

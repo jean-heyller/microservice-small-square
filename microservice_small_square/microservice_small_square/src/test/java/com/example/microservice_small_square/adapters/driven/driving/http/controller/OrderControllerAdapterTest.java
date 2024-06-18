@@ -93,7 +93,7 @@ class OrderControllerAdapterTest {
     }
 
     @Test
-    public void testUpdateOrder() {
+     void testUpdateOrder() {
         AddOrderUpdateRequest request = new AddOrderUpdateRequest(1L, 1L, 1L, 1L);
         Order order = new Order(1L, 1L, LocalDate.now(), 1L, Collections.emptyList(), 1L);
         when(orderRequestMapper.addUpdateRequestToOrder(request)).thenReturn(order);

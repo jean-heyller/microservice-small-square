@@ -12,4 +12,6 @@ public interface IOrderPersistencePort {
     public void updateOrder(Order order);
 
     public void deleteOrder(Order order);
+
+    public void validaCode(String number, String code, String idOrder);
 }
