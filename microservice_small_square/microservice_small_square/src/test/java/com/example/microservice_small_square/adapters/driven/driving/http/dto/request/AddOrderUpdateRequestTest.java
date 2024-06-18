@@ -23,14 +23,14 @@ class AddOrderUpdateRequestTest {
     }
 
     @Test
-    public void testAddOrderUpdateRequest_AllFieldsNotNull() {
+     void testAddOrderUpdateRequest_AllFieldsNotNull() {
         AddOrderUpdateRequest request = new AddOrderUpdateRequest(1L, 1L, 1L, 1L);
         Set<ConstraintViolation<AddOrderUpdateRequest>> violations = validator.validate(request);
         assertEquals(0, violations.size());
     }
 
     @Test
-    public void testAddOrderUpdateRequest_IdRestaurantNull() {
+     void testAddOrderUpdateRequest_IdRestaurantNull() {
         AddOrderUpdateRequest request = new AddOrderUpdateRequest(null, 1L, 1L, 1L);
         Set<ConstraintViolation<AddOrderUpdateRequest>> violations = validator.validate(request);
         assertEquals(1, violations.size());

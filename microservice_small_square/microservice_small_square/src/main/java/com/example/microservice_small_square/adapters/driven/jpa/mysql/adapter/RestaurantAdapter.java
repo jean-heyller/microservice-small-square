@@ -4,7 +4,7 @@ package com.example.microservice_small_square.adapters.driven.jpa.mysql.adapter;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.PermissionDeniedException;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.mapper.IRestaurantEntityMapper;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IRestaurantRepository;
-import com.example.microservice_small_square.adapters.driven.utils.services.RoleValidationService;
+import com.example.microservice_small_square.adapters.driven.utils.services.ClientService;
 import com.example.microservice_small_square.domain.model.Restaurant;
 import com.example.microservice_small_square.domain.spi.IRestaurantPersistencePort;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +20,12 @@ public class RestaurantAdapter implements IRestaurantPersistencePort {
 
     private final IRestaurantRepository restaurantRepository;
     private final IRestaurantEntityMapper restaurantEntityMapper;
-    private final RoleValidationService roleValidationService;
+    private final ClientService clientService;
 
 
     @Override
     public void saveRestaurant(Restaurant restaurant) {
-        boolean allowed = roleValidationService.validateUserRole(restaurant.getOwnerId(), "OWNER");
+        boolean allowed = clientService.validateUserRole(restaurant.getOwnerId(), "OWNER");
         if (!allowed) {
             throw new PermissionDeniedException(ERROR_MESSAGE);
         }

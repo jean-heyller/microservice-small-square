@@ -34,4 +34,10 @@ public class OrderUseCase implements IOrderServicePort {
     }
 
 
+    @Override
+    public void validaCode(String number, String code, String idOrder) {
+        iOrderPersistencePort.validaCode(number, code, idOrder);
+    }
+
+
 }

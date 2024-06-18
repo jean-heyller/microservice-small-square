@@ -1,17 +1,16 @@
 package com.example.microservice_small_square.adapters.driven.jpa.mysql.adapter;
+import com.example.microservice_small_square.adapters.driven.driving.http.dto.request.AddSmsSenderRequest;
 import com.example.microservice_small_square.adapters.driven.driving.http.mapper.request.ITraceabilityRequestMapper;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.entity.DishEntity;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.entity.OrderEntity;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.DataNotFoundException;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.NoMessagesFoundException;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.OrderStateUpdateException;
-import com.example.microservice_small_square.adapters.driven.jpa.mysql.exceptions.PendingOrderExistsException;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.mapper.IDishEntityMapper;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.mapper.IOrderEntityMapper;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IDishRepository;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IOrderRepository;
-import com.example.microservice_small_square.adapters.driven.sms.SmMService;
-import com.example.microservice_small_square.adapters.driven.utils.services.RoleValidationService;
+import com.example.microservice_small_square.adapters.driven.utils.services.ClientService;
 import com.example.microservice_small_square.domain.api.ITraceabilityServicePort;
 import com.example.microservice_small_square.domain.model.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +24,6 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -41,11 +39,10 @@ class OrderAdapterTest {
     @Mock
     private IOrderRepository orderRepository;
 
-    @Mock
-    private SmMService smmService;
+
 
     @Mock
-    private RoleValidationService roleValidationService;
+    private ClientService clientService;
 
     @Mock
     private IOrderEntityMapper orderEntityMapper;
@@ -61,7 +58,7 @@ class OrderAdapterTest {
     public void setUp() {
         MockitoAnnotations.openMocks(this);
         orderAdapter = new OrderAdapter(dishRepository, dishEntityMapper, orderRepository,
-                orderEntityMapper, smmService, roleValidationService,
+                orderEntityMapper, clientService,
                 traceabilityRequestMapper, traceabilityServicePort);
     }
 
@@ -78,7 +75,8 @@ class OrderAdapterTest {
 
 
     @Test
-     void testSaveOrder_Success() {
+    void testSaveOrder_Success() {
+        // Arrange
         DishQuantify dishQuantify = new DishQuantify(1L,1);
         Order order = new Order(1L,1L, LocalDate.now(),1L, Collections.singletonList(dishQuantify),1L);
 
@@ -88,9 +86,20 @@ class OrderAdapterTest {
         OrderEntity orderEntity = new OrderEntity();
         when(orderEntityMapper.toEntity(order)).thenReturn(orderEntity);
 
+        when(orderRepository.findByIdClientAndStatusIn(anyLong(), anyList())).thenReturn(Collections.emptyList());
+
+        Traceability traceability = new Traceability(1L, "id_client", "emailClient", LocalDate.now(), "PREPARATION", "READY", 1L, "emailEmployee", 1L, "status");
+        when(traceabilityRequestMapper.toModelOrder(order)).thenReturn(traceability);
+
+        when(clientService.getEmail(order.getIdChef())).thenReturn("emailEmployee");
+        when(clientService.getEmail(order.getIdClient())).thenReturn("emailClient");
+
+        // Act
         orderAdapter.saveOrder(order);
 
+        // Assert
         verify(orderRepository).save(any(OrderEntity.class));
+        verify(traceabilityServicePort).saveTraceability(traceability);
     }
 
     @Test
@@ -122,12 +131,10 @@ class OrderAdapterTest {
         OrderEntity orderEntity = new OrderEntity();
         orderEntity.setStatus("PREPARATION");
 
-        Traceability traceability = new Traceability(1L, "id_client", "emailClient", LocalDate.now(), "statusBefore", "statusAfter", 1L, "emailEmployee", 1L, "status");
-
+        Traceability traceability = new Traceability(1L, "id_client", "emailClient", LocalDate.now(), "PREPARATION", "READY", 1L, "emailEmployee", 1L, "status");
 
         when(orderRepository.findByIdAndIdClientAndIdRestaurant(anyLong(), anyLong(), anyLong())).thenReturn(Optional.of(orderEntity));
-        when(roleValidationService.getPhoneNumber(anyLong())).thenReturn("1234567890");
-        when(smmService.retrieveMessage(anyString())).thenReturn("Test message");
+        when(clientService.getPhoneNumber(anyLong())).thenReturn("1234567890");
         when(traceabilityRequestMapper.toModelOrder(order)).thenReturn(traceability);
 
         // Act
@@ -140,28 +147,18 @@ class OrderAdapterTest {
     }
 
 
+
+
     @Test
-     void testUpdateOrder_NoMessagesFoundException() {
+    void testUpdateOrder_RuntimeException() {
         DishQuantify dishQuantify = new DishQuantify(1L,1);
         Order order = new Order(1L,1L, LocalDate.now(),1L, Collections.singletonList(dishQuantify),1L);
         OrderEntity orderEntity = new OrderEntity();
-        orderEntity.setStatus("PREPARATION");
-        when(orderRepository.findByIdAndIdClientAndIdRestaurant(anyLong(), anyLong(), anyLong())).thenReturn(Optional.of(orderEntity));
-        when(roleValidationService.getPhoneNumber(anyLong())).thenReturn("1234567890");
-        when(smmService.retrieveMessage(anyString())).thenReturn(null);
-
-        assertThrows(NoMessagesFoundException.class, () -> orderAdapter.updateOrder(order));
-    }
-
-    @Test
-     void testUpdateOrder_OrderStateUpdateException() {
-        DishQuantify dishQuantify = new DishQuantify(1L,1);
-        Order order = new Order(1L,1L, LocalDate.now(),1L, Collections.singletonList(dishQuantify),1L);
-        OrderEntity orderEntity = new OrderEntity();
-        orderEntity.setStatus("DELIVERED");
+        orderEntity.setStatus("READY");
+        orderEntity.setCodeValidated(false);
         when(orderRepository.findByIdAndIdClientAndIdRestaurant(anyLong(), anyLong(), anyLong())).thenReturn(Optional.of(orderEntity));
 
-        assertThrows(OrderStateUpdateException.class, () -> orderAdapter.updateOrder(order));
+        assertThrows(RuntimeException.class, () -> orderAdapter.updateOrder(order));
     }
 
     @Test
@@ -183,20 +180,20 @@ class OrderAdapterTest {
 
     @Test
     void testDeleteOrder_StatusNotPending() {
-
+        // Arrange
         Order order = new Order(1L, 1L, LocalDate.now(), 1L, Collections.emptyList(), 1L);
         OrderEntity orderEntity = new OrderEntity();
         orderEntity.setStatus("READY");
 
         when(orderRepository.findByIdAndIdClientAndIdRestaurant(anyLong(), anyLong(), anyLong())).thenReturn(Optional.of(orderEntity));
-        when(roleValidationService.getPhoneNumber(anyLong())).thenReturn("1234567890");
+        when(clientService.getPhoneNumber(anyLong())).thenReturn("1234567890");
 
-
+        // Act
         orderAdapter.deleteOrder(order);
 
-
+        // Assert
         verify(orderRepository).save(orderEntity);
-        verify(smmService).sendSms(any(SmsSender.class));
+        verify(clientService).sendSms(any(AddSmsSenderRequest.class));
         assertEquals("READY", orderEntity.getStatus());
     }
 
@@ -206,14 +203,14 @@ class OrderAdapterTest {
         DishQuantify dishQuantify = new DishQuantify(1L,1);
         Order order = new Order(1L,1L, LocalDate.now(),1L, Collections.singletonList(dishQuantify),1L);
         OrderEntity orderEntity = new OrderEntity();
-        orderEntity.setStatus("PREPARATION");
+        orderEntity.setStatus("READY");
 
         when(orderRepository.findByIdAndIdClientAndIdRestaurant(anyLong(), anyLong(), anyLong())).thenReturn(Optional.of(orderEntity));
-        when(roleValidationService.getPhoneNumber(anyLong())).thenReturn("1234567890");
-        when(smmService.retrieveMessage(anyString())).thenThrow(new NoMessagesFoundException());
+        when(clientService.getPhoneNumber(anyLong())).thenReturn("1234567890");
+        doThrow(new RuntimeException()).when(clientService).sendSms(any(AddSmsSenderRequest.class));
 
-
-        assertThrows(NoMessagesFoundException.class, () -> orderAdapter.updateOrder(order));
+        // Act and Assert
+        assertThrows(RuntimeException.class, () -> orderAdapter.updateOrder(order));
 
         verify(orderRepository, never()).save(any(OrderEntity.class));
         verify(traceabilityServicePort, never()).saveTraceability(any(Traceability.class));

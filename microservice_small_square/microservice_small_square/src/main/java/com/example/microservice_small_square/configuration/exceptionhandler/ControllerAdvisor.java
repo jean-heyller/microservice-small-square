@@ -92,6 +92,12 @@ public class ControllerAdvisor {
                     Constants.NO_MESSAGES_FOUND_EXCEPTION_MESSAGE, HttpStatus.BAD_REQUEST.toString(), LocalDateTime.now()));
         }
 
+        @ExceptionHandler(CodeNotValidatedException.class)
+        public ResponseEntity<ExceptionResponse> handleCodeNotValidatedException(CodeNotValidatedException ex) {
+            return ResponseEntity.badRequest().body(new ExceptionResponse(
+                    Constants.CODE_NOT_VALIDATED_EXCEPTION_MESSAGE, HttpStatus.BAD_REQUEST.toString(), LocalDateTime.now()));
+        }
+
     }
 
 

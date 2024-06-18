@@ -9,7 +9,7 @@ import com.example.microservice_small_square.adapters.driven.jpa.mysql.mapper.ID
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.mapper.IRestaurantEntityMapper;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IDishRepository;
 import com.example.microservice_small_square.adapters.driven.jpa.mysql.repository.IRestaurantRepository;
-import com.example.microservice_small_square.adapters.driven.utils.services.RoleValidationService;
+import com.example.microservice_small_square.adapters.driven.utils.services.ClientService;
 import com.example.microservice_small_square.domain.model.Dish;
 import com.example.microservice_small_square.domain.model.Restaurant;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +34,7 @@ class DishAdapterTest {
     private IDishEntityMapper dishEntityMapper;
     private IRestaurantRepository restaurantRepository;
     private IRestaurantEntityMapper restaurantEntityMapper;
-    private RoleValidationService roleValidationService;
+    private ClientService clientService;
     private DishAdapter dishAdapter;
     private SecurityService securityService;
 
@@ -44,10 +44,10 @@ class DishAdapterTest {
         dishEntityMapper = Mockito.mock(IDishEntityMapper.class);
         restaurantRepository = Mockito.mock(IRestaurantRepository.class);
         restaurantEntityMapper = Mockito.mock(IRestaurantEntityMapper.class);
-        roleValidationService = Mockito.mock(RoleValidationService.class);
+        clientService = Mockito.mock(ClientService.class);
         securityService = Mockito.mock(SecurityService.class);
         dishAdapter = new DishAdapter(dishRepository, dishEntityMapper, restaurantRepository,
-                restaurantEntityMapper, roleValidationService, securityService);
+                restaurantEntityMapper, clientService, securityService);
     }
 
     @Test

@@ -24,5 +24,9 @@ public class Constants {
     public static final String ORDER_STATUS_EXCEPTION_MESSAGE = " is not in a valid state for this operation";
 
     public static final String NO_MESSAGES_FOUND_EXCEPTION_MESSAGE = "No messages found";
+
+
+
+    public static final String CODE_NOT_VALIDATED_EXCEPTION_MESSAGE = "The code has not been validated";
 }
 

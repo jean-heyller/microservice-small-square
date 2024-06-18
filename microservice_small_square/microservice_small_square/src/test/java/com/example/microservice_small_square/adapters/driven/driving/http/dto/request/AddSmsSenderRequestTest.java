@@ -23,14 +23,14 @@ class AddSmsSenderRequestTest {
     }
 
     @Test
-    public void testAddSmsSenderRequest_AllFieldsNotNull() {
+     void testAddSmsSenderRequest_AllFieldsNotNull() {
         AddSmsSenderRequest request = new AddSmsSenderRequest("1234567890", "Test message");
         Set<ConstraintViolation<AddSmsSenderRequest>> violations = validator.validate(request);
         assertEquals(0, violations.size());
     }
 
     @Test
-    public void testAddSmsSenderRequest_ToNull() {
+     void testAddSmsSenderRequest_ToNull() {
         AddSmsSenderRequest request = new AddSmsSenderRequest(null, "Test message");
         Set<ConstraintViolation<AddSmsSenderRequest>> violations = validator.validate(request);
         assertEquals(1, violations.size());
@@ -38,7 +38,7 @@ class AddSmsSenderRequestTest {
     }
 
     @Test
-    public void testAddSmsSenderRequest_MessageNull() {
+     void testAddSmsSenderRequest_MessageNull() {
         AddSmsSenderRequest request = new AddSmsSenderRequest("1234567890", null);
         Set<ConstraintViolation<AddSmsSenderRequest>> violations = validator.validate(request);
         assertEquals(1, violations.size());

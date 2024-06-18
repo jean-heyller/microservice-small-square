@@ -1,8 +1,7 @@
 package com.example.microservice_small_square.adapters.driven.driving.http.dto.response;
 
 
-import com.example.microservice_small_square.adapters.driven.jpa.mysql.entity.DishEntity;
-import com.example.microservice_small_square.domain.model.Dish;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
