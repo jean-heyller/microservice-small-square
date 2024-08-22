@@ -42,6 +42,7 @@ dependencies {
 	implementation 'com.auth0:java-jwt:4.4.0'
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
 	implementation 'jakarta.servlet:jakarta.servlet-api:5.0.0'
+	implementation 'com.twilio.sdk:twilio:8.27.0'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -56,6 +57,7 @@ dependencies {
 
 
 }
+
 
 tasks.named('bootBuildImage') {
 	builder = 'paketobuildpacks/builder-jammy-base:latest'
